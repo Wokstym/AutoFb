@@ -6,8 +6,8 @@ Strona, która służy do automatyzowania zadań związanych z fanpage na facebo
 # Roadmap
 
 ## Lab 3 (Kwiecień 7/9)
-- [ ] konfiguracja django
-- [ ] baza do przechowywania uzytkownikow i ich danych (wstępnie mongodb)
+- [x] konfiguracja django
+- [x] baza do przechowywania uzytkownikow i ich danych (wstępnie mongodb)
 ## Lab 4 (Kwiecień 21/23) 
 - [ ] logowanie/rejestrowanie
 - [ ] autoryzacja tokenem
