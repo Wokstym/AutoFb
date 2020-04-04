@@ -1,3 +1,4 @@
 .idea
 # config file with password
 AutoFB/config.py
+__pycache__
