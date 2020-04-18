@@ -2,6 +2,16 @@
 
 Strona, która służy do automatyzowania zadań związanych z fanpage na facebooku. 
 
+# Build with
+- Django 3.0.5
+- django-bootstrap4 1.1.1
+- facebook-sdk 3.1.0
+
+# Setup
+
+```bash
+pip install -r requirements.txt
+```
 
 # Roadmap
 

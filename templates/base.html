@@ -5,8 +5,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>Home page</title>
 </head>
-<body>
-<nav class="navbar navbar-expand-md bg-dark navbar-dark justify-content-between">
+  <body>
+    {% block body %}  <!-- HERE -->
+      <nav class="navbar navbar-expand-md bg-dark navbar-dark justify-content-between">
         <a class="navbar-brand ml-5" href="#">AutoFb</a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,36 +35,11 @@
           </ul>
         </div>
 </nav>
-<div class="container mt-5 col-12">
-    {% if posts %}
-            <div class = "row">
-                {% for post in posts %}
-                <div class="col-lg-4 my-2">
-                    <div class="card">
-{#                      <img src={{ post.picture }} class="card-img-top" alt="...">#}
-                      <div class="card-body">
-                          <h5 class="card-title">{{post.message}}</h5>
-                          <p class="card-text">{{ post.created_time }}</p>
-                          <a href="#" class="btn btn-warning">Show details</a>
-                      </div>
-                    </div>
-                </div>
-            {% endfor %}
-            </div>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
-</div>
-
-{#{% if posts %}#}
-{#    <ul>#}
-{#    {% for post in posts %}#}
-{#        <li>{{ post.message }}</li>#}
-{#    {% endfor %}#}
-{#    </ul>#}
-{#{% else %}#}
-{#    <p>No polls are available.</p>#}
-{#{% endif %}#}
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+    {% endblock body %}  <!-- AND HERE -->
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
