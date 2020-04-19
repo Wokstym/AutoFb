@@ -1,21 +1,26 @@
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 import facebook
 
+from accounts.forms import SignUpForm
 from .models import UserData
 
 
 def index(request):
-    userData= UserData.objects.get(user_id=3) # narazie biorę testusera po id, dopoki nie mamy logowania
+    current_user = request.user
+    userData= UserData.objects.get(user_id=current_user.id)
     token = userData.token
     graph = facebook.GraphAPI(token)
-    default_info = graph.get_object(id='110540857220080', fields='posts')
+    # page_id = userData.pages.page_id
+    page_id = '110540857220080'
+    default_info = graph.get_object(id=page_id, fields='posts')
     posts = default_info['posts']['data']
+    return render(request, 'home/index.html', {'posts': posts})
+    # return render(request, 'home/index.html')
 
-    template = loader.get_template('home/index.html')
-    context = {
-        'posts': posts,
-    }
-    return HttpResponse(template.render(context, request))
+def start_page(request):
+    return render(request, 'home/start.html')
+

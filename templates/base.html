@@ -1,0 +1,58 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    {% block stylesheet %}
+    {% endblock %}
+    <title>Home page</title>
+</head>
+  <body>
+    {% block body %}  <!-- HERE -->
+      <nav class="navbar navbar-expand-md bg-dark navbar-dark justify-content-between">
+        <a class="navbar-brand ml-5" href="{% url 'start' %}">AutoFb</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse ml-4" id="menu">
+          <ul class="navbar-nav mr-auto ">
+           <!-- <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-expanded="false" id="submenu" aria-haspopup="true">O nas</a>
+              <div class="dropdown-menu" aria-labelledby="submenu">
+                  <a class="dropdown-item" href="#">Nasza firma</a>
+                  <a class="dropdown-item" href="#">Nasz zespół</a>
+              </div>
+            </li>-->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signup' %}">Zarejestruj sie</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Home</a>
+            </li>
+              {% if request.user.is_superuser %}
+              <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+            </li>
+               {% endif %}
+          </ul>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item ">
+                <a class="nav-link" >{{ user.username }}</a>
+            </li>
+            </ul>
+        </div>
+</nav>
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+    {% endblock body %}  <!-- AND HERE -->
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
