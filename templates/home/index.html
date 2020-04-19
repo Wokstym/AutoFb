@@ -1,33 +1,62 @@
 {% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/home/index.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5 col-12">
     {% if posts %}
             <div class = "row">
-                {% for post in posts %}
-                <div class="col-lg-4 my-2">
-                    <div class="card">
-{#                      <img src={{ post.picture }} class="card-img-top" alt="...">#}
-                      <div class="card-body">
-                          <h5 class="card-title">{{post.message}}</h5>
-                          <p class="card-text">{{ post.created_time }}</p>
-                          <a href="#" class="btn btn-warning">Show details</a>
-                      </div>
-                    </div>
+                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto">
+                    <h1>Your posts</h1>
                 </div>
+
+                {% for post in posts %}
+                    <div class="col-lg-8 offset-lg-2 my-4">
+
+                        <div class="card">
+                            {% if image_url %}
+                                <div class="col-5 my-3">
+                                    <img src={{ image_url }} class="rounded-circle" alt="...">
+                                </div>
+                            {% endif %}
+
+                          <div class="card-body">
+                              <p class="card-text">{{ post.created_time }}</p>
+                              <br>
+                                <hr class="line mb-5">
+                              <h4 class="card-title">{{post.message}}</h4>
+                          </div>
+
+                            {%  if post.url %}
+                                <div class="container col-lg-12 text-center mx-auto">
+                                    <img src={{ post.url }} class="card-img-top" alt="...">
+                                </div>
+
+                            {%  endif %}
+
+                            <div class="card-body">
+                                <br>
+                                <hr class="line">
+                            </div>
+
+                            <div class="col-12 text-center my-3">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" id="checkButton" class="btn btn-dark">Like all comments</button>
+                                    <button type="button" id="checkButton" class="btn btn-dark">Delete danger words</button>
+                                    <button type="button" id="checkButton" class="btn btn-dark">Delete post</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
             {% endfor %}
             </div>
 {% else %}
-    <p>No polls are available.</p>
+    <p>There isn't any post on your site</p>
 {% endif %}
 </div>
-
-{#{% if posts %}#}
-{#    <ul>#}
-{#    {% for post in posts %}#}
-{#        <li>{{ post.message }}</li>#}
-{#    {% endfor %}#}
-{#    </ul>#}
-{#{% else %}#}
-{#    <p>No polls are available.</p>#}
-{#{% endif %}#}
 {% endblock %}

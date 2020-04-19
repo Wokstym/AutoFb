@@ -1,0 +1,27 @@
+.card{
+    background-color:rgb(40,40,40) ;
+}
+
+.card-body{
+    color: white;
+}
+
+body{
+    background-image: url(../../img/home/prism.png);
+}
+
+.card-text{
+    font-size: 0.8rem;
+}
+
+#checkButton{
+    background-color: rgb(40,40,40);
+}
+
+h1{
+    color:white;
+}
+
+hr.line{
+    border-top: 1px solid #8c8b8b;
+}
