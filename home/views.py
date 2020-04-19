@@ -1,17 +1,25 @@
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 import facebook
+
+from accounts.forms import SignUpForm
+
 from .models import UserData
 
 
 def index(request):
-    userData= UserData.objects.get(user_id=3) # narazie biorę testusera po id, dopoki nie mamy logowania
+    current_user = request.user
+    userData= UserData.objects.get(user_id=current_user.id)
     token = userData.token
     graph = facebook.GraphAPI(token)
-    default_info = graph.get_object(id='110540857220080', fields='posts')
-    info = graph.get_object("110540857220080/picture?redirect=0")
+
+    # page_id = userData.pages.page_id
+    page_id = '110540857220080'
+    default_info = graph.get_object(id=page_id, fields='posts')
+    info = graph.get_object(page_id + "/picture?redirect=0")
 
     posts = default_info['posts']['data']
     profile_image = info['data']['url']
@@ -36,4 +44,10 @@ def index(request):
         'posts': posts,
         'image_url': profile_image,
     }
-    return HttpResponse(template.render(context, request))
+    #return HttpResponse(template.render(context, request))
+    return render(request, 'home/index.html', context)
+    # return render(request, 'home/index.html')
+    
+
+def start_page(request):
+    return render(request, 'home/start.html')

@@ -11,7 +11,7 @@
   <body>
     {% block body %}  <!-- HERE -->
       <nav class="navbar navbar-expand-md bg-dark navbar-dark justify-content-between">
-        <a class="navbar-brand ml-5" href="#">AutoFb</a>
+        <a class="navbar-brand ml-5" href="{% url 'start' %}">AutoFb</a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -27,7 +27,9 @@
               </div>
             </li>-->
             <li class="nav-item">
-              <a class="nav-link" href="#">Zarejestruj sie</a>
+
+              <a class="nav-link" href="{% url 'signup' %}">Zarejestruj sie</a>
+              
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'index' %}">Home</a>
