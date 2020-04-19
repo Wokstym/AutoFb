@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 import facebook
-import json
 from .models import UserData
 
 
