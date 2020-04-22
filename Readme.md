@@ -21,9 +21,9 @@ pip install -r requirements.txt
 - [x] konfiguracja django
 - [x] baza do przechowywania uzytkownikow i ich danych (wstępnie mongodb)
 ## Lab 4 (Kwiecień 21/23) 
-- [ ] logowanie/rejestrowanie
+- [x] logowanie/rejestrowanie
 - [ ] autoryzacja tokenem
-- [ ] strona ze wszystkimi postami z fanpage (do wyboru aktywnosci ktore chcemy wykonac na facebook)
+- [x] strona ze wszystkimi postami z fanpage (do wyboru aktywnosci ktore chcemy wykonac na facebook)
 ## Lab 5 (Maj 5/7)
 - [ ] wyswietl top komentujących na całej stronie
 - [ ] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
