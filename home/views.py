@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import loader
 import facebook
+from django.core.paginator import Paginator
 
 from accounts.forms import SignUpForm
 
@@ -44,6 +45,10 @@ def index(request):
         'posts': posts,
         'image_url': profile_image,
     }
+    paginator = Paginator(context['posts'], 3)
+    page = request.GET.get('page')
+    context['posts'] = paginator.get_page(page)
+
     #return HttpResponse(template.render(context, request))
     return render(request, 'home/index.html', context)
     # return render(request, 'home/index.html')
