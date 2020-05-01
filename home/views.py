@@ -59,7 +59,7 @@ def index(request):
                     graph.put_like(object_id=comment['id'])
 
     # liking all comments in given post
-    if request.method == 'POST' and 'like_comments' in request.POST:
+    elif request.method == 'POST' and 'like_comments' in request.POST:
         data_dict = request.POST.dict()
         comments = data_dict['comments_to_like']
 
@@ -76,6 +76,12 @@ def index(request):
                 print(comment_json["id"])
                 graph.put_like(object_id=comment_json["id"])
 
+    # deleting given post
+    elif request.method == 'POST' and 'delete_post' in request.POST:
+        data_dict = request.POST.dict()
+        post_id = data_dict['post_to_delete']
+        print(post_id)
+        graph.delete_object(id=post_id)
 
     #return HttpResponse(template.render(context, request))
     return render(request, 'home/index.html', context)
@@ -83,3 +89,7 @@ def index(request):
 
 def start_page(request):
     return render(request, 'home/start.html')
+
+
+def management_page(request):
+    return render(request, 'home/management.html')

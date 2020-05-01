@@ -55,10 +55,18 @@
                                     <form method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="comments_to_like" value="{{ post.comments }}">
-                                        <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5" name="like_comments">Like all comments</button>
+                                        <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5" style="background-color: dodgerblue" name="like_comments">Like all comments</button>
                                     </form>
-                                    <button type="button" id="checkButton" class="btn btn-dark mx-lg-3">Delete danger words</button>
-                                    <button type="button" id="checkButton" class="btn btn-dark ml-lg-5">Delete post</button>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="comments_to_delete" value="{{ post.comments }}">
+                                        <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3" style="background-color: darkgoldenrod" name="delete_comments">Delete danger words</button>
+                                    </form>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="post_to_delete" value="{{ post.id }}">
+                                        <button type="submit" id="checkButton" class="btn btn-dark ml-lg-5" style="background-color: darkred" name="delete_post">Delete post</button>
+                                    </form>
                                 </div>
                             </div>
 

@@ -31,6 +31,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Home</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'management' %}">Management</a>
+            </li>
             {% if request.user.is_superuser %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
