@@ -10,8 +10,15 @@
 <div class="container mt-5 col-12">
     {% if posts %}
             <div class = "row">
-                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto">
+                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto my-5">
                     <h1>Your posts</h1>
+                </div>
+
+                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-dark" name="like_all_comments" style="background-color: rgb(40,40,40)">Like comments in every post</button>
+                    </form>
                 </div>
 
                 {% for post in posts %}
@@ -45,7 +52,11 @@
 
                             <div class="col-12 text-center my-3">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" id="checkButton" class="btn btn-dark mr-lg-5">Like all comments</button>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="comments_to_like" value="{{ post.comments }}">
+                                        <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5" name="like_comments">Like all comments</button>
+                                    </form>
                                     <button type="button" id="checkButton" class="btn btn-dark mx-lg-3">Delete danger words</button>
                                     <button type="button" id="checkButton" class="btn btn-dark ml-lg-5">Delete post</button>
                                 </div>
