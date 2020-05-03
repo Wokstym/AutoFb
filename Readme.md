@@ -22,13 +22,14 @@ pip install -r requirements.txt
 - [x] baza do przechowywania uzytkownikow i ich danych (wstępnie mongodb)
 ## Lab 4 (Kwiecień 21/23) 
 - [x] logowanie/rejestrowanie
-- [ ] autoryzacja tokenem
+- [x] autoryzacja tokenem
 - [x] strona ze wszystkimi postami z fanpage (do wyboru aktywnosci ktore chcemy wykonac na facebook)
 ## Lab 5 (Maj 5/7)
 - [ ] wyswietl top komentujących na całej stronie
 - [ ] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
 - [ ] mozliwość usuwania komentarzy automatycznie zawierających słowa z bazy którą definiuje użytkownik
-- [ ] automatyczne lajkowanie komentarzy w danym poscie/ wszystkie posty
+- [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
+- [x] usuwanie posta
 ## lab 6 (Maj 19/21)
 - [ ] forms do dodawania postu na fanpage (text, zdjęcie, data i czas dodania postu)
 - [ ] forms wstawiania wielu postów na fanpage (texty, zdjecia i okresowość dodawania)

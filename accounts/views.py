@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 
+from home.models import UserData, BannedWord, Page
 from .forms import SignUpForm, InsertToken, validate_token_page_id
 
 
@@ -26,6 +27,13 @@ def get_token(request):
         page_id = form.cleaned_data['page_id']
 
         if form.is_valid() and validate_token_page_id(token, page_id):
+
+            current_user = request.user
+            userData = UserData.objects.get(user_id=current_user.id)
+
+            page = Page(page_id=page_id, token=token, words=[])
+            userData.pages.append(page)
+            userData.save()
 
             return redirect('index')
         else:

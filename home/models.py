@@ -15,17 +15,20 @@ class BannedWord(models.Model):
 class Page(models.Model):
     page_id = models.CharField(max_length=254)
     token = models.CharField(max_length=254)
-    # words = models.ArrayField(model_container=BannedWord)
+
+    words = models.ArrayField(model_container=BannedWord)
 
     class Meta:
         abstract = True
 
+    def str(self):
+        return self.page_id
+
 
 class UserData(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
-    # pages = models.ArrayField(model_container=Page)
-
-    # this will be deleted
-    token = models.CharField(max_length=200)
+    pages = models.ArrayField(
+        model_container=Page
+    )
 
     objects = models.DjongoManager()

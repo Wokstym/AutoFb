@@ -9,22 +9,22 @@ import json
 
 from accounts.forms import SignUpForm
 
-from .models import UserData
+from .models import UserData, Page
 
-# zakomentowalem to, bo model sie zmienil wiec to by errory wyjebywalo, ale kurwa te jebane modele pierdolone
+
 def index(request):
     current_user = request.user
     userData = UserData.objects.get(user_id=current_user.id)
-    print(userData)
-    token = userData.token
-    graph = facebook.GraphAPI(token)
 
-    # page_id = userData.pages.page_id
-    page_id = '110540857220080'
+    token = userData.pages[0].token
+    graph = facebook.GraphAPI(token)
+    page_id = userData.pages[0].page_id
+
     default_info = graph.get_object(id=page_id, fields='posts')
     info = graph.get_object(page_id + "/picture?redirect=0")
 
     posts = default_info['posts']['data']
+    print(posts)
     profile_image = info['data']['url']
 
     for post in posts:
@@ -43,7 +43,6 @@ def index(request):
         else:
             post['comments'] = comments
 
-    template = loader.get_template('home/index.html')
     context = {
         'posts': posts,
         'image_url': profile_image,
