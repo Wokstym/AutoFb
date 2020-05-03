@@ -20,14 +20,6 @@
 
     <div class="collapse navbar-collapse ml-4" id="menu">
         <ul class="navbar-nav mr-auto ">
-            <!-- <li class="nav-item dropdown">
-               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-expanded="false" id="submenu" aria-haspopup="true">O nas</a>
-               <div class="dropdown-menu" aria-labelledby="submenu">
-                   <a class="dropdown-item" href="#">Nasza firma</a>
-                   <a class="dropdown-item" href="#">Nasz zespół</a>
-               </div>
-             </li>-->
-
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Home</a>
             </li>
@@ -46,7 +38,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                     <a class="dropdown-item" href="#">My account</a>
-                    <a class="dropdown-item" href="#">Change password</a>
+                    <a class="dropdown-item" href="{% url 'add_page' %}">Add page</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
                 </div>

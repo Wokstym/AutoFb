@@ -1,0 +1,45 @@
+{% extends 'accounts/base_accounts.html' %}
+
+
+{% block title %}Insert token{% endblock %}
+
+
+{% block content %}
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Insert token</h3>
+
+                <div class="alert alert-dark" role="alert">
+                    Unfortunately facebook give access for requesting tokens to verified applications and
+                    it has to be provided with full finished application to do that. This is only a small
+                    project for university and as a alternative,
+                    there is a bypass writen by a member of a group which collects writers of small bots.
+                    Please use
+                    <a href="https://maxbots.ddns.net/token/">this link</a>
+                    to get token and page id. Sorry for inconvenience ;).
+                </div>
+
+                {% if isValid is False %}
+                <div class="alert alert-danger" role="alert">
+                    Provided token and page id is not valid.
+
+                </div>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    {% include 'accounts/form.html' %}
+                    <button type="submit" class="btn btn-primary btn-block">Add Page</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

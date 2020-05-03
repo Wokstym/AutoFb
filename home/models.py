@@ -2,21 +2,26 @@ from django.contrib.auth.models import User
 from djongo import models
 
 
+class BannedWord(models.Model):
+    word = models.CharField(max_length=100)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.word
+
+
 class Page(models.Model):
-    page_id = models.IntegerField()
-    name = models.CharField(max_length=200)
+    page_id = models.CharField(max_length=254)
+    token = models.CharField(max_length=254)
+    words = models.ArrayField(model_container=BannedWord)
 
     class Meta:
         abstract = True
 
 
-# Need to figure out to store nested
 class UserData(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
-    # to działało, potem sie samo zjebało, 2 godizny szukałem czemu to spierdolone gówno nie działa i nw
-    # pages = models.EmbeddedField(
-    #     model_container=Page,
-    #     null=True
-    # )
-    token = models.CharField(max_length=200)
+    pages = models.ArrayField(model_container=Page)
     objects = models.DjongoManager()
