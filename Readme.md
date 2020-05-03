@@ -1,13 +1,14 @@
 # Projekt z Programowania w języku Python
 
-Strona, która służy do automatyzowania zadań związanych z fanpage na facebooku. 
+[![](https://img.shields.io/badge/Django-2.2.12-red)](https://www.djangoproject.com)
+[![](https://img.shields.io/badge/django_bootstrap4-1.1.1-blue)](https://pypi.org/project/django-bootstrap4/)
+[![](https://img.shields.io/badge/django_widget_tweaks-1.4.8-green)](https://pypi.org/project/django-widget-tweaks/)
+[![](https://img.shields.io/badge/facebook_sdk-3.1.0-orange)](https://pypi.org/project/facebook-sdk/)
+[![](https://img.shields.io/badge/djongo-1.3.1-yellow)](https://pypi.org/project/djongo/)
+[![](https://img.shields.io/badge/dnspython-1.16.0-lightgrey)](https://pypi.org/project/dnspython/)
 
-# Build with
-- Django
-- django-bootstrap4
-- django-widget-tweaks
-- facebook-sdk
-- djongo
+
+Strona, która służy do automatyzowania zadań związanych z fanpage na facebooku. 
 
 # Setup
 
