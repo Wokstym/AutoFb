@@ -30,6 +30,6 @@ urlpatterns = [
     path('', home_view.start_page, name='start'),
     path('admin/', admin.site.urls, name='admin'),
     path('management/', home_view.management_page, name='management'),
-    path('management/<int:page_number>/', home_view.management_page, name='management')
-
+    path('management/<int:page_number>/', home_view.management_page, name='management'),
+    path('pages/', home_view.pages, name='pages'),
 ]

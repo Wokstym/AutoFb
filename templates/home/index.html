@@ -11,7 +11,7 @@
     {% if posts %}
             <div class = "row">
                 <div class="col-lg-8 col-offset-lg-2 text-center mx-auto my-5">
-                    <h1>Your posts</h1>
+                    <h1 style="text-shadow: 3px 3px 3px rgba(0,0,0,0.5)">Your posts</h1>
                 </div>
 
                 <div class="col-lg-8 col-offset-lg-8 text-center mx-auto">
@@ -33,7 +33,7 @@
                 {% for post in posts %}
                     <div class="col-lg-8 offset-lg-2 my-4">
 
-                        <div class="card">
+                        <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
                             {% if image_url %}
                                 <div class="col-5 my-3">
                                     <img src={{ image_url }} class="rounded-circle" alt="...">
@@ -119,7 +119,7 @@
             </div>
 
     {% else %}
-        <p>There isn't any post on your site</p>
+        <p style="color: white">There isn't any post on your site</p>
     {% endif %}
 </div>
 {% endblock %}
