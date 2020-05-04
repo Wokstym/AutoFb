@@ -11,6 +11,9 @@ class BannedWord(models.Model):
     def __str__(self):
         return self.word
 
+    def get_word(self):
+        return self.word
+
 
 class Page(models.Model):
     page_id = models.CharField(max_length=254)
@@ -23,6 +26,15 @@ class Page(models.Model):
 
     def str(self):
         return self.page_id
+
+    def get_token(self):
+        return self.token
+
+    def get_page_id(self):
+        return self.page_id
+
+    def get_words(self):
+        return self.words
 
 
 class UserData(models.Model):
