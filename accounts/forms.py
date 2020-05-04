@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from home.models import BannedWord
+
 
 class SignUpForm(UserCreationForm):
     email = forms.CharField(max_length=254, required=True, widget=forms.EmailInput())
@@ -17,6 +19,14 @@ class InsertToken(forms.Form):
     page_id = forms.CharField(label='Page ID', max_length=254, required=True)
 
 
+class InsertWord(forms.Form):
+    word = forms.CharField(label='Word', max_length=100, required=True)
+
+    class Meta:
+        model = BannedWord
+        fields = 'word'
+
+
 def validate_token_page_id(token, page_id):
     try:
         graph = facebook.GraphAPI(token)
@@ -24,3 +34,10 @@ def validate_token_page_id(token, page_id):
         return True
     except:
         return False
+
+
+def validate_word(word):
+    if " " in word:
+        return False
+
+    return True
