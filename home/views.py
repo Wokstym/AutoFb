@@ -76,7 +76,6 @@ def index(request, page_number=0):
     elif request.method == 'POST' and 'delete_post' in request.POST:
         delete_post(request.POST.dict(), graph)
 
-    # return HttpResponse(template.render(context, request))
     return render(request, 'home/index.html', context)
 
 
@@ -119,8 +118,8 @@ def split_words(words):
 
 def delete_comments_in_every_post(posts, graph, banned_words):
     array_with_banned_words = []
-    for word in banned_words:
-        array_with_banned_words.append(word.get_word())
+    for banned_word in banned_words:
+        array_with_banned_words.append(banned_word.word)
 
     for post in posts:
         if post['comments'] is not None:
@@ -135,8 +134,8 @@ def delete_comments_in_every_post(posts, graph, banned_words):
 
 def delete_comments_in_post(data_dict, graph, banned_words):
     array_with_banned_words = []
-    for word in banned_words:
-        array_with_banned_words.append(word.get_word())
+    for banned_word in banned_words:
+        array_with_banned_words.append(banned_word.word)
 
     print(array_with_banned_words)
     split_comments = split(data_dict['comments_to_delete'])
