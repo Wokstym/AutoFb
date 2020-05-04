@@ -14,10 +14,16 @@
                     <h1>Your posts</h1>
                 </div>
 
-                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto">
+                <div class="col-lg-8 col-offset-lg-8 text-center mx-auto">
                     <form method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-dark" name="like_all_comments" style="background-color: rgb(40,40,40)">Like comments in every post</button>
+                    </form>
+                </div>
+                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto mt-2">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-dark" name="delete_all_comments" style="background-color: rgb(40,40,40)">Delete comments with banned words in every post</button>
                     </form>
                 </div>
 

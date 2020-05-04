@@ -6,6 +6,7 @@ from django.template import loader
 import facebook
 from django.core.paginator import Paginator
 import json
+import re
 
 from accounts.forms import SignUpForm
 
@@ -63,6 +64,14 @@ def index(request, page_number=0):
     elif request.method == 'POST' and 'like_comments' in request.POST:
         like_comments_in_post(request.POST.dict(), graph)
 
+    # deleting comments in every post which including banned words from database
+    elif request.method == 'POST' and 'delete_all_comments' in request.POST:
+        delete_comments_in_every_post(posts, graph, userData.pages[page_number].words)
+
+    # deleting comments in given post which including banned words from database
+    elif request.method == 'POST' and 'delete_comments' in request.POST:
+        delete_comments_in_post(request.POST.dict(), graph, userData.pages[page_number].words)
+
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
         delete_post(request.POST.dict(), graph)
@@ -78,21 +87,69 @@ def like_comments_in_every_post(posts, graph):
                 graph.put_like(object_id=comment['id'])
 
 
-def like_comments_in_post(data_dict, graph):
-    comments = data_dict['comments_to_like']
-
+def split(comments):
     comments = comments.replace("[", "")
     comments = comments.replace("]", "")
     comments = comments.replace("'", "\"")
-    split_comments = comments.split('}, ')
+    return comments.split('}, ')
+
+
+def comment_to_json(comment):
+    comment = comment.replace("}", "")
+    comment = "{" + comment + "}"
+    return json.loads(comment)
+
+
+def like_comments_in_post(data_dict, graph):
+    split_comments = split(data_dict['comments_to_like'])
 
     for i, comment in enumerate(split_comments):
         if i % 2 != 0:
-            comment = comment.replace("}", "")
-            comment = "{" + comment + "}"
-            comment_json = json.loads(comment)
+            comment_json = comment_to_json(comment)
             print(comment_json["id"])
             graph.put_like(object_id=comment_json["id"])
+
+
+def split_words(words):
+    words = re.sub(r'[0-9]', '', words)
+    words = re.sub(r'[^\w\s]', '', words)
+    words = words.lower()
+    return words.split(' ')
+
+
+def delete_comments_in_every_post(posts, graph, banned_words):
+    array_with_banned_words = []
+    for word in banned_words:
+        array_with_banned_words.append(word.get_word())
+
+    for post in posts:
+        if post['comments'] is not None:
+            for comment in post['comments']:
+                print(comment["message"])
+                for word in split_words(comment["message"]):
+                    print(word)
+                    if word in array_with_banned_words:
+                        graph.delete_object(comment["id"])
+                        break
+
+
+def delete_comments_in_post(data_dict, graph, banned_words):
+    array_with_banned_words = []
+    for word in banned_words:
+        array_with_banned_words.append(word.get_word())
+
+    print(array_with_banned_words)
+    split_comments = split(data_dict['comments_to_delete'])
+    for i, comment in enumerate(split_comments):
+        if i % 2 != 0:
+            comment_json = comment_to_json(comment)
+            print(comment_json["message"])
+
+            for word in split_words(comment_json["message"]):
+                print(word)
+                if word in array_with_banned_words:
+                    graph.delete_object(comment_json["id"])
+                    break
 
 
 def delete_post(data_dict, graph):
