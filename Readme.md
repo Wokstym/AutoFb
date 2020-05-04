@@ -28,7 +28,7 @@ pip install -r requirements.txt
 ## Lab 5 (Maj 5/7)
 - [ ] wyswietl top komentujących na całej stronie
 - [ ] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
-- [ ] mozliwość usuwania komentarzy automatycznie zawierających słowa z bazy którą definiuje użytkownik
+- [x] mozliwość usuwania komentarzy zawierających słowa z bazy którą definiuje użytkownik
 - [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
 - [x] usuwanie posta
 ## lab 6 (Maj 19/21)

@@ -196,3 +196,23 @@ def management_page(request, page_number=0):
         form = InsertWord()
 
     return render(request, 'home/management.html', {'form': form, 'isValid': True})
+
+
+def pages(request):
+    current_user = request.user
+    userData = UserData.objects.get(user_id=current_user.id)
+    i = -1
+    user_pages = []
+
+    for _ in userData.pages:
+        i += 1
+        token = userData.pages[i].token
+        graph = facebook.GraphAPI(token)
+        page_id = userData.pages[i].page_id
+        info = graph.get_object(page_id + "/picture?redirect=0")
+        profile_image = info['data']['url']
+        user_pages.append((i, profile_image))
+    print(i)
+    print(user_pages)
+
+    return render(request, 'home/pages.html', {'pages': user_pages})

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/home/pages.css' %}">
+{% endblock %}
+
+{% block title %}Pages{% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-12">
+    <div class="row justify-content-center">
+    {% if pages %}
+        <div class="col-lg-8 col-offset-lg-2 mb-5 text-center">
+            <h1>Choose your fanpage</h1>
+        </div>
+        {% for i, photo in pages %}
+            <div class="col-lg-5 my-3 mx-3">
+                <div class="card">
+                    {% if photo %}
+                        <div class="col-5 my-3">
+                            <img src={{ photo }} class="rounded-circle" alt="...">
+                        </div>
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <a class="btn btn-primary" href="{% url 'index' page_number=i %}">Choose</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if not pages %}
+        <div class="col-lg-8 col-offset-lg-2 mb-5 text-center">
+            <a class="btn btn-primary" href="{% url 'add_page' %}">Add page</a>
+        </div>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}
