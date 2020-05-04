@@ -8,9 +8,9 @@ from django.core.paginator import Paginator
 import json
 import re
 
-from accounts.forms import SignUpForm
+from accounts.forms import SignUpForm, InsertWord, validate_word
 
-from .models import UserData, Page
+from .models import UserData, Page, BannedWord
 
 
 def index(request, page_number=0):
@@ -49,6 +49,7 @@ def index(request, page_number=0):
             post['comments'] = comments
 
     context = {
+        'page_number': page_number,
         'posts': posts,
         'image_url': profile_image,
     }
@@ -161,5 +162,37 @@ def start_page(request):
     return render(request, 'home/start.html')
 
 
-def management_page(request):
-    return render(request, 'home/management.html')
+def management_page(request, page_number=0):
+    if request.method == 'POST':
+        form = InsertWord(request.POST)
+
+        if form.is_valid():
+            word = form.cleaned_data['word']
+            if validate_word(word):
+                word = re.sub(r'[0-9]', '', word)
+                word = re.sub(r'[^\w\s]', '', word)
+                word = word.lower()
+
+                current_user = request.user
+                userData = UserData.objects.get(user_id=current_user.id)
+
+                banned_words = []
+                for banned_word in userData.pages[page_number].words:
+                    banned_words.append(banned_word.word)
+
+                if word not in banned_words:
+                    banned_word = BannedWord(word=word)
+                    userData.pages[page_number].words.append(banned_word)
+                    userData.save()
+                form = InsertWord()
+                return render(request, 'home/management.html', {'form': form, 'isValid': True})
+            else:
+                form = InsertWord()
+                return render(request, 'home/management.html', {'form': form, 'isValid': False})
+        else:
+            form = InsertWord()
+            return render(request, 'home/management.html', {'form': form, 'isValid': False})
+    else:
+        form = InsertWord()
+
+    return render(request, 'home/management.html', {'form': form, 'isValid': True})

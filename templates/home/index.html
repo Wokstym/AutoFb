@@ -26,6 +26,9 @@
                         <button type="submit" class="btn btn-dark" name="delete_all_comments" style="background-color: rgb(40,40,40)">Delete comments with banned words in every post</button>
                     </form>
                 </div>
+                <div class="col-lg-8 col-offset-lg-2 text-center mx-auto mt-2">
+                    <a class="btn btn-dark" style="background-color: rgb(40,40,40)" href="{% url 'management' page_number=page_number %}">Management</a>
+                </div>
 
                 {% for post in posts %}
                     <div class="col-lg-8 offset-lg-2 my-4">
