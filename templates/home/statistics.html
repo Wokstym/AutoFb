@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/home/statistics.css' %}">
+{% endblock %}
+
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-12">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 offset-lg-2 my-4">
+            <div class="card ">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-2" style="color: black">Top 5 commenters</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Comments nr</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in top_5_users %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter0|add:1 }}</th>
+                            <td><img src={{ user.picture }} class="rounded-circle" alt="..."></td>
+
+                            <td>{{user.name}}</td>
+
+                            <td>{{user.nr_of_posts}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -12,6 +12,8 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            userData = UserData(user=user, pages=[])
+            userData.save()
             login(request, user)
             return redirect('add_page')
     else:
