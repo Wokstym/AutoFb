@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 from accounts import views as accounts_view
 from home import views as home_view
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('home/', include('home.urls'), name='home'),
+    path('home/', RedirectView.as_view(url='0', permanent=False), name='home'),
     path('home/<int:page_number>/', include('home.urls'), name='home'),
     path('signup/', accounts_view.signup, name='signup'),
     path('add_page/', accounts_view.get_token, name='add_page'),
@@ -31,5 +32,6 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('management/', home_view.management_page, name='management'),
     path('management/<int:page_number>/', home_view.management_page, name='management'),
+    path('statistics/<int:page_number>/', home_view.statistics_page, name='statistics'),
     path('pages/', home_view.pages, name='pages'),
 ]
