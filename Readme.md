@@ -26,7 +26,7 @@ pip install -r requirements.txt
 - [x] autoryzacja tokenem
 - [x] strona ze wszystkimi postami z fanpage (do wyboru aktywnosci ktore chcemy wykonac na facebook)
 ## Lab 5 (Maj 5/7)
-- [ ] wyswietl top komentujących na całej stronie
+- [x] wyswietl top komentujących na całej stronie
 - [ ] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
 - [x] mozliwość usuwania komentarzy zawierających słowa z bazy którą definiuje użytkownik
 - [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
