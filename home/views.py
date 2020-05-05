@@ -221,7 +221,7 @@ def pages(request):
         profile_image = info['data']['url']
         user_pages.append({
             'photo': profile_image,
-            'name':fanpage_name
+            'name': fanpage_name
         })
     print(i)
     print(user_pages)
