@@ -184,17 +184,25 @@ def management_page(request, page_number=0):
                     userData.pages[page_number].words.append(banned_word)
                     userData.save()
                 form = InsertWord()
-                return render(request, 'home/management.html', {'form': form, 'isValid': True})
+                return render(request, 'home/management.html', {'page_number': page_number,
+                                                                'form': form,
+                                                                'isValid': True})
             else:
                 form = InsertWord()
-                return render(request, 'home/management.html', {'form': form, 'isValid': False})
+                return render(request, 'home/management.html', {'page_number': page_number,
+                                                                'form': form,
+                                                                'isValid': False})
         else:
             form = InsertWord()
-            return render(request, 'home/management.html', {'form': form, 'isValid': False})
+            return render(request, 'home/management.html', {'page_number': page_number,
+                                                            'form': form,
+                                                            'isValid': False})
     else:
         form = InsertWord()
 
-    return render(request, 'home/management.html', {'form': form, 'isValid': True})
+    return render(request, 'home/management.html', {'page_number': page_number,
+                                                    'form': form,
+                                                    'isValid': True})
 
 
 def pages(request):
