@@ -24,7 +24,6 @@ def signup(request):
 def get_token(request):
     if request.method == 'POST':
         form = InsertToken(request.POST)
-        print(form)
         token = form.cleaned_data['token']
         page_id = form.cleaned_data['page_id']
 
@@ -37,7 +36,7 @@ def get_token(request):
             userData.pages.append(page)
             userData.save()
 
-            return redirect('index')
+            return redirect('home')
         else:
             return render(request, 'accounts/add_page.html', {'form': form, 'isValid': False})
     else:

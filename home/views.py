@@ -1,9 +1,12 @@
 import json
 import re
 from collections import defaultdict
+from datetime import datetime
 
+import dateutil.parser
 import facebook
 from django.core.paginator import Paginator
+from django.http import Http404
 from django.shortcuts import render
 
 from accounts.forms import InsertWord, validate_word
@@ -14,10 +17,8 @@ def index(request, page_number=0):
     current_user = request.user
     userData = UserData.objects.get(user_id=current_user.id)
 
-    try:
-        userData.pages[page_number]
-    except:
-        page_number = 0
+    if len(userData.pages) <= page_number:
+        raise Http404("Fanpage data not found")
 
     token = userData.pages[page_number].token
     graph = facebook.GraphAPI(token)
@@ -25,12 +26,14 @@ def index(request, page_number=0):
 
     info = graph.get_object(page_id + "/picture?redirect=0")
     profile_image = info['data']['url']
+    fanpage_name = graph.get_object(id=page_id, fields='name')['name']
 
     posts = get_posts(graph, page_id)
 
     for post in posts:
         photo = graph.get_object(post['id'] + "?fields=object_id")
         comments = graph.get_connections(id=post['id'], connection_name='comments')['data']
+        post['created_time'] = dateutil.parser.parse(post['created_time'])
 
         if photo.get('object_id'):
             photo = graph.get_object(photo['object_id'] + "/picture")
@@ -48,6 +51,7 @@ def index(request, page_number=0):
         'page_number': page_number,
         'posts': posts,
         'image_url': profile_image,
+        'name': fanpage_name
     }
     paginator = Paginator(context['posts'], 3)
     page = request.GET.get('page')
@@ -102,7 +106,6 @@ def like_comments_in_post(data_dict, graph):
     for i, comment in enumerate(split_comments):
         if i % 2 != 0:
             comment_json = comment_to_json(comment)
-            print(comment_json["id"])
             graph.put_like(object_id=comment_json["id"])
 
 
@@ -206,8 +209,12 @@ def pages(request):
         graph = facebook.GraphAPI(token)
         page_id = userData.pages[i].page_id
         info = graph.get_object(page_id + "/picture?redirect=0")
+        fanpage_name = graph.get_object(id=page_id, fields='name')['name']
         profile_image = info['data']['url']
-        user_pages.append((i, profile_image))
+        user_pages.append({
+            'photo': profile_image,
+            'name':fanpage_name
+        })
     print(i)
     print(user_pages)
 

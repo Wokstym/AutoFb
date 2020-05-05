@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block stylesheet %}
-  <link rel="stylesheet" href="{% static 'css/home/pages.css' %}">
+<link rel="stylesheet" href="{% static 'css/home/pages.css' %}">
 {% endblock %}
 
 {% block title %}Pages{% endblock %}
@@ -11,30 +11,49 @@
 {% block content %}
 <div class="container mt-5 col-12">
     <div class="row justify-content-center">
-    {% if pages %}
+        {% if pages %}
         <div class="col-lg-8 col-offset-lg-2 mb-5 text-center">
             <h1>Choose your fanpage</h1>
         </div>
-        {% for i, photo in pages %}
-            <div class="col-lg-5 my-3 mx-3">
-                <div class="card">
-                    {% if photo %}
-                        <div class="col-5 my-3">
-                            <img src={{ photo }} class="rounded-circle" alt="...">
-                        </div>
-                    {% endif %}
-                    <div class="card-body text-center">
-                        <a class="btn btn-primary" href="{% url 'index' page_number=i %}">Choose</a>
-                    </div>
+        {% for page in pages %}
+        <div class="col-lg-5 my-3 mx-3">
+
+            <div class="row my-3 card-body">
+                {% if image_url %}
+                <div class="col-md-2">
+                    <img src={{ image_url }} class="rounded-circle" alt="...">
+
+                </div>
+                {% endif %}
+                <div class="col-md-5">
+                    <p class="lead">{{name}}
                 </div>
             </div>
+
+
+            <div class="card">
+                <div class="row my-3 card-body">
+                    <div class="col-2 my-3">
+                        <img src={{ page.photo }} class="rounded-circle" alt="...">
+                    </div>
+                    <div class="col-md-10">
+                        <p class="lead">{{page.name}}
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <a class="btn btn-primary" href="{% url 'index' page_number=forloop.counter0 %}">Choose</a>
+                </div>
+            </div>
+
+
+        </div>
         {% endfor %}
-    {% endif %}
-    {% if not pages %}
+        {% endif %}
+        {% if not pages %}
         <div class="col-lg-8 col-offset-lg-2 mb-5 text-center">
             <a class="btn btn-primary" href="{% url 'add_page' %}">Add page</a>
         </div>
-    {% endif %}
+        {% endif %}
     </div>
 </div>
 
