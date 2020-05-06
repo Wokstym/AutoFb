@@ -1,7 +1,6 @@
 import json
 import re
 from collections import defaultdict
-from datetime import datetime
 
 import dateutil.parser
 import facebook
@@ -14,44 +13,49 @@ from .models import UserData, BannedWord
 
 
 def index(request, page_number=0):
-    current_user = request.user
-    userData = UserData.objects.get(user_id=current_user.id)
+    user_data = UserData.objects.get(user_id=request.user.id)
 
-    if len(userData.pages) <= page_number:
+    if len(user_data.pages) <= page_number:
         raise Http404("Fanpage data not found")
 
-    token = userData.pages[page_number].token
+    token = user_data.pages[page_number].token
     graph = facebook.GraphAPI(token)
-    page_id = userData.pages[page_number].page_id
+    page_id = user_data.pages[page_number].page_id
 
-    info = graph.get_object(page_id + "/picture?redirect=0")
-    profile_image = info['data']['url']
-    fanpage_name = graph.get_object(id=page_id, fields='name')['name']
+    data = graph.get_object(id=page_id, fields='name, picture, posts')
+    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=3')
+    # pretty_print_json(comments_test)
+    # pretty_print_json(data)
 
-    posts = get_posts(graph, page_id)
+    profile_image_url = data['picture']['data']['url']
+    page_name = data['name']
+    # posts = data['posts']['data']
+
+    posts = posts_data['data']
 
     for post in posts:
-        photo = graph.get_object(post['id'] + "?fields=object_id")
-        comments = graph.get_connections(id=post['id'], connection_name='comments')['data']
+        post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
+
         post['created_time'] = dateutil.parser.parse(post['created_time'])
 
-        if photo.get('object_id'):
-            photo = graph.get_object(photo['object_id'] + "/picture")
-            photo = photo['url']
-            post['url'] = photo
-        else:
-            post['url'] = None
+        if post_data['type'] == "photo":
+            photo_data = graph.get_object(id=post_data['object_id'], fields='images')
+            post['photo_source'] = photo_data['images'][0]['source']
 
-        if not comments:
-            post['comments'] = None
-        else:
-            post['comments'] = comments
+        elif post_data['type'] == "video":
+            video = graph.get_object(id=post_data['object_id'], fields='source')
+            post['video_source'] = video['source']
+
+        if 'comments' in post_data:
+            post['comments'] = post_data['comments']['data']
+
+
 
     context = {
         'page_number': page_number,
         'posts': posts,
-        'image_url': profile_image,
-        'name': fanpage_name
+        'image_url': profile_image_url,
+        'name': page_name
     }
     paginator = Paginator(context['posts'], 3)
     page = request.GET.get('page')
@@ -67,11 +71,11 @@ def index(request, page_number=0):
 
     # deleting comments in every post which including banned words from database
     elif request.method == 'POST' and 'delete_all_comments' in request.POST:
-        delete_comments_in_every_post(posts, graph, userData.pages[page_number].words)
+        delete_comments_in_every_post(posts, graph, user_data.pages[page_number].words)
 
     # deleting comments in given post which including banned words from database
     elif request.method == 'POST' and 'delete_comments' in request.POST:
-        delete_comments_in_post(request.POST.dict(), graph, userData.pages[page_number].words)
+        delete_comments_in_post(request.POST.dict(), graph, user_data.pages[page_number].words)
 
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
@@ -172,17 +176,16 @@ def management_page(request, page_number=0):
                 word = re.sub(r'[^\w\s]', '', word)
                 word = word.lower()
 
-                current_user = request.user
-                userData = UserData.objects.get(user_id=current_user.id)
+                user_data = UserData.objects.get(user_id=request.user.id)
 
                 banned_words = []
-                for banned_word in userData.pages[page_number].words:
+                for banned_word in user_data.pages[page_number].words:
                     banned_words.append(banned_word.word)
 
                 if word not in banned_words:
                     banned_word = BannedWord(word=word)
-                    userData.pages[page_number].words.append(banned_word)
-                    userData.save()
+                    user_data.pages[page_number].words.append(banned_word)
+                    user_data.save()
                 form = InsertWord()
                 return render(request, 'home/management.html', {'page_number': page_number,
                                                                 'form': form,
@@ -206,37 +209,36 @@ def management_page(request, page_number=0):
 
 
 def pages(request):
-    current_user = request.user
-    userData = UserData.objects.get(user_id=current_user.id)
-    i = -1
+    user_data = UserData.objects.get(user_id=request.user.id)
     user_pages = []
 
-    for _ in userData.pages:
-        i += 1
-        token = userData.pages[i].token
+    for page_data in user_data.pages:
+        token = page_data.token
         graph = facebook.GraphAPI(token)
-        page_id = userData.pages[i].page_id
-        info = graph.get_object(page_id + "/picture?redirect=0")
-        fanpage_name = graph.get_object(id=page_id, fields='name')['name']
-        profile_image = info['data']['url']
+        page_id = page_data.page_id
+
+        data = graph.get_object(id=page_id, fields='name, picture, posts')
+
+        page_profile_image_url = data['picture']['data']['url']
+        page_name = data['name']
+
         user_pages.append({
-            'photo': profile_image,
-            'name': fanpage_name
+            'photo': page_profile_image_url,
+            'name': page_name
         })
-    print(i)
-    print(user_pages)
 
     return render(request, 'home/pages.html', {'pages': user_pages})
 
 
 def statistics_page(request, page_number=0):
-    userData = UserData.objects.get(user_id=request.user.id)
-    token = userData.pages[page_number].token
+    user_data = UserData.objects.get(user_id=request.user.id)
+    token = user_data.pages[page_number].token
     graph = facebook.GraphAPI(token)
-    page_id = userData.pages[page_number].page_id
+    page_id = user_data.pages[page_number].page_id
 
     user_id_to_post_nr = defaultdict(lambda: 0)
-    for post in get_posts(graph, page_id):
+    posts = graph.get_object(id=page_id, fields='posts')['posts']['data']
+    for post in posts:
         comments = graph.get_connections(id=post['id'], connection_name='comments')['data']
 
         for comment in comments:
@@ -256,6 +258,5 @@ def statistics_page(request, page_number=0):
     return render(request, 'home/statistics.html', {'page_number': page_number, 'top_5_users': top_5_users})
 
 
-def get_posts(graph, page_id):
-    default_info = graph.get_object(id=page_id, fields='posts')
-    return default_info['posts']['data']
+def pretty_print_json(json_string):
+    print(json.dumps(json_string, indent=4))
