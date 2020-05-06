@@ -1,4 +1,3 @@
-import json
 import re
 from collections import defaultdict
 import home.utils as utils
@@ -23,7 +22,7 @@ def index(request, page_number=0):
     graph = facebook.GraphAPI(token)
     page_id = user_data.pages[page_number].page_id
 
-    data = graph.get_object(id=page_id, fields='name, picture, posts')
+    data = graph.get_object(id=page_id, fields='name, picture')
     posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=20')
     # pretty_print_json(posts_data)
     # pretty_print_json(data)
@@ -50,10 +49,6 @@ def index(request, page_number=0):
         if 'comments' in post_data:
             post['comments'] = post_data['comments']['data']
 
-
-
-
-
     context = {
         'page_number': page_number,
         'posts': posts,
@@ -66,19 +61,19 @@ def index(request, page_number=0):
 
     # liking all comments in every post
     if request.method == 'POST' and 'like_all_comments' in request.POST:
-        utils.like_comments_in_every_post(posts, graph)
+        utils.like_comments_in_every_post(posts, graph, page_id)
 
     # liking all comments in given post
     elif request.method == 'POST' and 'like_comments' in request.POST:
-        utils.like_comments_in_post(request.POST.dict(), graph)
+        utils.like_comments_in_post(request.POST.dict(), graph, page_id)
 
     # deleting comments in every post which including banned words from database
     elif request.method == 'POST' and 'delete_all_comments' in request.POST:
-        utils.delete_comments_in_every_post(posts, graph, user_data.pages[page_number].words)
+        utils.delete_comments_in_every_post(posts, graph, user_data.pages[page_number].words, page_id)
 
     # deleting comments in given post which including banned words from database
     elif request.method == 'POST' and 'delete_comments' in request.POST:
-        utils.delete_comments_in_post(request.POST.dict(), graph, user_data.pages[page_number].words)
+        utils.delete_comments_in_post(request.POST.dict(), graph, user_data.pages[page_number].words, page_id)
 
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
@@ -93,10 +88,8 @@ def start_page(request):
 
 def management_page(request, page_number=0):
     user_data = UserData.objects.get(user_id=request.user.id)
+    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words]
 
-    banned_words = []
-    for banned_word in user_data.pages[page_number].words:
-        banned_words.append(banned_word.word)
     if request.method == 'POST':
         form = InsertWord(request.POST)
 
@@ -172,7 +165,8 @@ def statistics_page(request, page_number=0):
 
         for comment in comments:
             comment_user_id = comment['from']['id']
-            user_id_to_post_nr[comment_user_id] += 1
+            if comment_user_id != page_id:
+                user_id_to_post_nr[comment_user_id] += 1
 
     top_5_users = []
     for (user_id, nr_of_posts) in sorted(user_id_to_post_nr.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:5]:
@@ -185,5 +179,3 @@ def statistics_page(request, page_number=0):
         })
 
     return render(request, 'home/statistics.html', {'page_number': page_number, 'top_5_users': top_5_users})
-
-
