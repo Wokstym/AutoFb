@@ -7,7 +7,7 @@ from home import views as home_view
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('home/', RedirectView.as_view(url='0', permanent=False), name='index'),
+    path('home/', RedirectView.as_view(url='0', permanent=False), name='home'),
     path('home/<int:page_number>/', include('home.urls'), name='home'),
     path('signup/', accounts_view.signup, name='signup'),
     path('add_page/', accounts_view.get_token, name='add_page'),

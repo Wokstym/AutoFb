@@ -23,7 +23,7 @@ def index(request, page_number=0):
     page_id = user_data.pages[page_number].page_id
 
     data = graph.get_object(id=page_id, fields='name, picture, posts')
-    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=3')
+    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=20')
     # pretty_print_json(comments_test)
     # pretty_print_json(data)
 
@@ -166,6 +166,11 @@ def start_page(request):
 
 
 def management_page(request, page_number=0):
+    user_data = UserData.objects.get(user_id=request.user.id)
+
+    banned_words = []
+    for banned_word in user_data.pages[page_number].words:
+        banned_words.append(banned_word.word)
     if request.method == 'POST':
         form = InsertWord(request.POST)
 
@@ -176,34 +181,32 @@ def management_page(request, page_number=0):
                 word = re.sub(r'[^\w\s]', '', word)
                 word = word.lower()
 
-                user_data = UserData.objects.get(user_id=request.user.id)
-
-                banned_words = []
-                for banned_word in user_data.pages[page_number].words:
-                    banned_words.append(banned_word.word)
-
                 if word not in banned_words:
                     banned_word = BannedWord(word=word)
                     user_data.pages[page_number].words.append(banned_word)
                     user_data.save()
                 form = InsertWord()
                 return render(request, 'home/management.html', {'page_number': page_number,
+                                                                'words': banned_words,
                                                                 'form': form,
                                                                 'isValid': True})
             else:
                 form = InsertWord()
                 return render(request, 'home/management.html', {'page_number': page_number,
+                                                                'words': banned_words,
                                                                 'form': form,
                                                                 'isValid': False})
         else:
             form = InsertWord()
             return render(request, 'home/management.html', {'page_number': page_number,
+                                                            'words': banned_words,
                                                             'form': form,
                                                             'isValid': False})
     else:
         form = InsertWord()
 
     return render(request, 'home/management.html', {'page_number': page_number,
+                                                    'words': banned_words,
                                                     'form': form,
                                                     'isValid': True})
 
