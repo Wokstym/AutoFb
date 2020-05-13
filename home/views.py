@@ -8,19 +8,12 @@ from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render
 
-from accounts.forms import InsertWord, validate_word
+from accounts.forms import InsertWord, validate_word, InsertPost
 from .models import UserData, BannedWord
 
 
 def index(request, page_number=0):
-    user_data = UserData.objects.get(user_id=request.user.id)
-
-    if len(user_data.pages) <= page_number:
-        raise Http404("Fanpage data not found")
-
-    token = user_data.pages[page_number].token
-    graph = facebook.GraphAPI(token)
-    page_id = user_data.pages[page_number].page_id
+    user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     data = graph.get_object(id=page_id, fields='name, picture')
     posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=20')
@@ -87,6 +80,10 @@ def start_page(request):
 
 
 def management_page(request, page_number=0):
+    return render(request, 'home/management.html', {'page_number': page_number})
+
+
+def banned_words_page(request, page_number=0):
     user_data = UserData.objects.get(user_id=request.user.id)
     banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words]
 
@@ -105,29 +102,29 @@ def management_page(request, page_number=0):
                     user_data.pages[page_number].words.append(banned_word)
                     user_data.save()
                 form = InsertWord()
-                return render(request, 'home/management.html', {'page_number': page_number,
-                                                                'words': banned_words,
-                                                                'form': form,
-                                                                'isValid': True})
+                return render(request, 'home/banned_words.html', {'page_number': page_number,
+                                                                  'words': banned_words,
+                                                                  'form': form,
+                                                                  'isValid': True})
             else:
                 form = InsertWord()
-                return render(request, 'home/management.html', {'page_number': page_number,
-                                                                'words': banned_words,
-                                                                'form': form,
-                                                                'isValid': False})
+                return render(request, 'home/banned_words.html', {'page_number': page_number,
+                                                                  'words': banned_words,
+                                                                  'form': form,
+                                                                  'isValid': False})
         else:
             form = InsertWord()
-            return render(request, 'home/management.html', {'page_number': page_number,
-                                                            'words': banned_words,
-                                                            'form': form,
-                                                            'isValid': False})
+            return render(request, 'home/banned_words.html', {'page_number': page_number,
+                                                              'words': banned_words,
+                                                              'form': form,
+                                                              'isValid': False})
     else:
         form = InsertWord()
 
-    return render(request, 'home/management.html', {'page_number': page_number,
-                                                    'words': banned_words,
-                                                    'form': form,
-                                                    'isValid': True})
+    return render(request, 'home/banned_words.html', {'page_number': page_number,
+                                                      'words': banned_words,
+                                                      'form': form,
+                                                      'isValid': True})
 
 
 def pages(request):
@@ -153,10 +150,7 @@ def pages(request):
 
 
 def statistics_page(request, page_number=0):
-    user_data = UserData.objects.get(user_id=request.user.id)
-    token = user_data.pages[page_number].token
-    graph = facebook.GraphAPI(token)
-    page_id = user_data.pages[page_number].page_id
+    user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     user_id_to_post_nr = defaultdict(lambda: 0)
     posts = graph.get_object(id=page_id, fields='posts')['posts']['data']
@@ -179,3 +173,26 @@ def statistics_page(request, page_number=0):
         })
 
     return render(request, 'home/statistics.html', {'page_number': page_number, 'top_5_users': top_5_users})
+
+
+def add_post(request, page_number=0):
+    if request.method == 'POST':
+        form = InsertPost(request.POST, request.FILES)
+        if form.is_valid():
+            message = form.cleaned_data['message']
+            image = form.cleaned_data['image']
+            _, _, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
+            if image is None:
+                graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
+            else:
+                print("adding image")
+                # doesn't work yet
+                # graph.put_photo(image=open('image', 'rb'), message=message)
+
+        return render(request, 'home/add_post.html', {'page_number': page_number,
+                                                      'form': InsertPost(),
+                                                      'isValid': True})
+    else:
+        return render(request, 'home/add_post.html', {'page_number': page_number,
+                                                      'form': InsertPost(),
+                                                      'isValid': False})

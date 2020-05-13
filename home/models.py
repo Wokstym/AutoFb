@@ -12,11 +12,24 @@ class BannedWord(models.Model):
         return self.word
 
 
+# class Post(models.Model):
+#     message = models.TextField(max_length=1000)
+#     image = models.ImageField()
+#     scheduled_date = models.DateTimeField()
+#
+#     class Meta:
+#         abstract = True
+#
+#     def str(self):
+#         return self.message
+#
+
 class Page(models.Model):
     page_id = models.CharField(max_length=254)
     token = models.CharField(max_length=254)
 
     words = models.ArrayField(model_container=BannedWord)
+    # posts = models.ArrayField(model_container=Post)
 
     class Meta:
         abstract = True
