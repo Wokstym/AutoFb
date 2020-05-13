@@ -27,6 +27,11 @@ class InsertWord(forms.Form):
         fields = 'word'
 
 
+class InsertPost(forms.Form):
+    message = forms.CharField(label='Message', max_length=512, required=True)
+    image = forms.ImageField(label='Image', required=False)
+
+
 def validate_token_page_id(token, page_id):
     try:
         graph = facebook.GraphAPI(token)

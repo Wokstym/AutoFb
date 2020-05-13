@@ -1,6 +1,11 @@
 import json
 import re
 
+import facebook
+from django.http import Http404
+
+from home.models import UserData
+
 
 def split_words(words):
     words = re.sub(r'[0-9]', '', words)
@@ -59,3 +64,17 @@ def delete_post(data_dict, graph):
     post_id = data_dict['post_to_delete']
     print(post_id)
     graph.delete_object(id=post_id)
+
+
+def get_graph_api_inf(user_id, page_number):
+    user_data = UserData.objects.get(user_id=user_id)
+
+    if len(user_data.pages) <= page_number:
+        raise Http404("Fanpage data not found")
+
+    token = user_data.pages[page_number].token
+    graph = facebook.GraphAPI(token)
+    page_id = user_data.pages[page_number].page_id
+
+    return user_data, token, graph, page_id
+
