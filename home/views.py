@@ -16,8 +16,8 @@ def index(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     data = graph.get_object(id=page_id, fields='name, picture')
-    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=20')
-    # pretty_print_json(posts_data)
+    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=3')
+    utils.pretty_print_json(posts_data)
     # pretty_print_json(data)
 
     profile_image_url = data['picture']['data']['url']
@@ -152,15 +152,41 @@ def pages(request):
 def statistics_page(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
+    posts_data = graph.get_connections(id=page_id, connection_name='feed?&limit=50&summary=1')
     user_id_to_post_nr = defaultdict(lambda: 0)
-    posts = graph.get_object(id=page_id, fields='posts')['posts']['data']
-    for post in posts:
-        comments = graph.get_connections(id=post['id'], connection_name='comments')['data']
 
-        for comment in comments:
-            comment_user_id = comment['from']['id']
-            if comment_user_id != page_id:
-                user_id_to_post_nr[comment_user_id] += 1
+    while posts_data['data']:
+        posts_id = [dictionary_with_comments['id'] for dictionary_with_comments in posts_data['data']]
+
+        list_of_posts_with_comments = graph.get_objects(ids=posts_id, fields='comments')
+        # utils.pretty_print_json( list_of_posts_with_comments)
+        comments_data = [comments_dict for comments_dict in
+                         [comments_in_posts[1] for comments_in_posts in list_of_posts_with_comments.items()] if
+                         'comments' in comments_dict]
+
+        list_of_commenters_id = []
+        for comments_in_one_post in comments_data:
+            cursor_comments_data = comments_in_one_post['comments']
+            post_id = comments_in_one_post['id']
+
+            while cursor_comments_data['data']:
+                # print(len(cursor_comments_data['data']))
+                list_of_commenters_id += [comment['from']['id'] for comment in cursor_comments_data['data'] if
+                                          comment['from']['id'] != page_id]
+
+                if len(cursor_comments_data['data']) < 25:
+                    break
+                cursor_comments_data = graph.get_connections(
+                    id=post_id,
+                    connection_name='comments?&after=' + cursor_comments_data['paging']['cursors']['after']
+                )
+
+        for comment_id in list_of_commenters_id:
+            user_id_to_post_nr[comment_id] += 1
+        posts_data = graph.get_connections(
+            id=page_id,
+            connection_name='feed?&limit=50&after=' + posts_data['paging']['cursors']['after']
+        )
 
     top_5_users = []
     for (user_id, nr_of_posts) in sorted(user_id_to_post_nr.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:5]:
@@ -171,7 +197,6 @@ def statistics_page(request, page_number=0):
             'picture': user_name_photo['picture']['data']['url'],
             'nr_of_posts': nr_of_posts
         })
-
     return render(request, 'home/statistics.html', {'page_number': page_number, 'top_5_users': top_5_users})
 
 

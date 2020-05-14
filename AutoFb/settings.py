@@ -26,7 +26,7 @@ SECRET_KEY = 'wcjl=$wum=c&)*j(l!+we*zos^++%1nslu!5#$x!fr-5r@3_v%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
