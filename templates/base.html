@@ -6,6 +6,10 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link
+            rel="stylesheet" type="text/css"
+            href="//cdn.jsdelivr.net/gh/loadingio/ldbutton@v1.0.1/dist/ldbtn.min.css"
+    />
     {% block stylesheet %}{% endblock %}
     <title>{% block title %}Home page{% endblock %}</title>
 </head>
@@ -22,20 +26,20 @@
     <div class="collapse navbar-collapse ml-4" id="menu">
         <ul class="navbar-nav mr-auto ">
             {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'pages'%}">Your pages</a>
-                </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'pages'%}">Your pages</a>
+            </li>
             {% endif %}
             {% if page_number is not None %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' page_number=page_number%}">Posts</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'statistics' page_number=page_number%}">Statistics</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'management' page_number=page_number%}">Management</a>
-                </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' page_number=page_number%}">Posts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'statistics' page_number=page_number%}">Statistics</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'management' page_number=page_number%}">Management</a>
+            </li>
             {% endif %}
             {% if request.user.is_superuser %}
             <li class="nav-item">
@@ -74,6 +78,8 @@
 </div>
 {% endblock body %}  <!-- AND HERE -->
 
+{% block script %}
+{% endblock %}
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>

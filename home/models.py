@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from djongo import models
+from django.db import models as or_mod
 
 
 class BannedWord(models.Model):
@@ -25,10 +26,10 @@ class BannedWord(models.Model):
 #
 
 class StatPerson(models.Model):
-    position = models.IntegerField
+    position = models.IntegerField()
     name = models.CharField(max_length=254)
     photo_url = models.CharField(max_length=254)
-    comments_nr = models.IntegerField
+    comments_nr = models.IntegerField()
 
     class Meta:
         abstract = True
@@ -41,6 +42,7 @@ class StatPerson(models.Model):
 
 
 class Statistics(models.Model):
+    top_commenters_refresh_date = or_mod.DateTimeField()
     top_commenters = models.ArrayField(
         model_container=StatPerson
     )
