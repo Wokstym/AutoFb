@@ -229,14 +229,22 @@ def add_post(request, page_number=0):
         if form.is_valid():
             message = form.cleaned_data['message']
             image = form.cleaned_data['image']
+            date = form.cleaned_data['date']
             _, _, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
             if image is None:
-                graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
+                if utils.datetime_to_string() > date:
+                    graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
+                else:
+                    # TODO add to scheduler
+                    print("to scheduler")
             else:
-                print("adding image")
-                # TODO
-                # doesn't work yet
-                # graph.put_photo(image=open('image', 'rb'), message=message)
+                if utils.datetime_to_string() > date:
+                    # TODO add photo
+                    print("add photo")
+                    # graph.put_photo(image=open('image', 'rb'), message=message)
+                else:
+                    # TODO add to scheduler
+                    print("to scheduler")
 
         return render(request, 'home/add_post.html', {'page_number': page_number,
                                                       'form': InsertPost(),
