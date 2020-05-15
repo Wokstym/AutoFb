@@ -13,9 +13,12 @@
 <div class="container mt-5 col-12">
     <div class="row justify-content-center">
         <div class="col-lg-8 offset-lg-2 my-4 text-center mx-auto">
+
             <div class="card">
                 <div class="card-body">
+
                     <h3 class="card-title text-center mb-2" style="color: black">Top 5 commenters</h3>
+                    <h5 class="card-title text-center mb-2" >Last refreshed: {{last_refresh}}</h5>
                     <table class="table">
                         <thead>
                         <tr>
@@ -28,12 +31,12 @@
                         <tbody>
                         {% for user in top_5_users %}
                         <tr>
-                            <th scope="row">{{ forloop.counter0|add:1 }}</th>
-                            <td><img src={{ user.picture }} class="rounded-circle" alt="..."></td>
+                            <th scope="row">{{ user.position }}</th>
+                            <td><img src={{ user.photo_url }} class="rounded-circle" alt="..."></td>
 
                             <td>{{user.name}}</td>
 
-                            <td>{{user.nr_of_posts}}</td>
+                            <td>{{user.comments_nr}}</td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -41,6 +44,14 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-lg-8 col-offset-lg-8 text-center mx-auto">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark" name="refresh_data"
+                    style="background-color: rgb(40,40,40)">Refresh data
+            </button>
+        </form>
     </div>
 </div>
 

@@ -1,5 +1,11 @@
+import datetime
 import re
 from collections import defaultdict
+
+from dateutil.tz import UTC
+from django.utils import timezone
+import datetime
+
 import home.utils as utils
 
 import dateutil.parser
@@ -9,7 +15,7 @@ from django.http import Http404
 from django.shortcuts import render
 
 from accounts.forms import InsertWord, validate_word, InsertPost
-from .models import UserData, BannedWord
+from .models import UserData, BannedWord, StatPerson
 
 
 def index(request, page_number=0):
@@ -152,52 +158,69 @@ def pages(request):
 def statistics_page(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
-    posts_data = graph.get_connections(id=page_id, connection_name='feed?&limit=50&summary=1')
-    user_id_to_post_nr = defaultdict(lambda: 0)
+    user_data = UserData.objects.get(user_id=request.user.id)
 
-    while posts_data['data']:
-        posts_id = [dictionary_with_comments['id'] for dictionary_with_comments in posts_data['data']]
+    if request.method == 'POST' and 'refresh_data' in request.POST:
+        #
+        # posts_data = graph.get_connections(id=page_id, connection_name='feed?&limit=50&summary=1')
+        # user_id_to_post_nr = defaultdict(lambda: 0)
+        #
+        # while posts_data['data']:
+        #     posts_id = [dictionary_with_comments['id'] for dictionary_with_comments in posts_data['data']]
+        #
+        #     list_of_posts_with_comments = graph.get_objects(ids=posts_id, fields='comments')
+        #     # utils.pretty_print_json( list_of_posts_with_comments)
+        #     comments_data = [comments_dict for comments_dict in
+        #                      [comments_in_posts[1] for comments_in_posts in list_of_posts_with_comments.items()] if
+        #                      'comments' in comments_dict]
+        #
+        #     list_of_commenters_id = []
+        #     for comments_in_one_post in comments_data:
+        #         cursor_comments_data = comments_in_one_post['comments']
+        #         post_id = comments_in_one_post['id']
+        #
+        #         while cursor_comments_data['data']:
+        #             # print(len(cursor_comments_data['data']))
+        #             list_of_commenters_id += [comment['from']['id'] for comment in cursor_comments_data['data'] if
+        #                                       comment['from']['id'] != page_id]
+        #
+        #             if len(cursor_comments_data['data']) < 25:
+        #                 break
+        #             cursor_comments_data = graph.get_connections(
+        #                 id=post_id,
+        #                 connection_name='comments?&after=' + cursor_comments_data['paging']['cursors']['after']
+        #             )
+        #
+        #     for comment_id in list_of_commenters_id:
+        #         user_id_to_post_nr[comment_id] += 1
+        #     posts_data = graph.get_connections(
+        #         id=page_id,
+        #         connection_name='feed?&limit=50&after=' + posts_data['paging']['cursors']['after']
+        #     )
+        #
+        # top_5_users = []
+        # for i, (user_id, nr_of_comments) in enumerate(
+        #         sorted(user_id_to_post_nr.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:5]):
+        #     user_name_photo = graph.get_object(id=user_id, fields='picture, name')
+        #     stat_person = StatPerson(
+        #         position=(i + 1),
+        #         name=user_name_photo['name'],
+        #         photo_url=user_name_photo['picture']['data']['url'],
+        #         comments_nr=nr_of_comments
+        #     )
+        #
+        #     top_5_users.append(stat_person)
+        # user_data.pages[page_number].statistics.top_commenters = top_5_users
+        # TODO cos jest jebniete z tymi datami
 
-        list_of_posts_with_comments = graph.get_objects(ids=posts_id, fields='comments')
-        # utils.pretty_print_json( list_of_posts_with_comments)
-        comments_data = [comments_dict for comments_dict in
-                         [comments_in_posts[1] for comments_in_posts in list_of_posts_with_comments.items()] if
-                         'comments' in comments_dict]
+        user_data.pages[page_number].statistics.top_commenters_refresh_date = utils.datetime_to_string()
+        user_data.save()
 
-        list_of_commenters_id = []
-        for comments_in_one_post in comments_data:
-            cursor_comments_data = comments_in_one_post['comments']
-            post_id = comments_in_one_post['id']
+    top_5_users = user_data.pages[page_number].statistics.top_commenters
+    last_refresh = user_data.pages[page_number].statistics.top_commenters_refresh_date
 
-            while cursor_comments_data['data']:
-                # print(len(cursor_comments_data['data']))
-                list_of_commenters_id += [comment['from']['id'] for comment in cursor_comments_data['data'] if
-                                          comment['from']['id'] != page_id]
-
-                if len(cursor_comments_data['data']) < 25:
-                    break
-                cursor_comments_data = graph.get_connections(
-                    id=post_id,
-                    connection_name='comments?&after=' + cursor_comments_data['paging']['cursors']['after']
-                )
-
-        for comment_id in list_of_commenters_id:
-            user_id_to_post_nr[comment_id] += 1
-        posts_data = graph.get_connections(
-            id=page_id,
-            connection_name='feed?&limit=50&after=' + posts_data['paging']['cursors']['after']
-        )
-
-    top_5_users = []
-    for (user_id, nr_of_posts) in sorted(user_id_to_post_nr.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:5]:
-        user_name_photo = graph.get_object(id=user_id, fields='picture, name')
-
-        top_5_users.append({
-            'name': user_name_photo['name'],
-            'picture': user_name_photo['picture']['data']['url'],
-            'nr_of_posts': nr_of_posts
-        })
-    return render(request, 'home/statistics.html', {'page_number': page_number, 'top_5_users': top_5_users})
+    return render(request, 'home/statistics.html',
+                  {'page_number': page_number, 'top_5_users': top_5_users, 'last_refresh': last_refresh})
 
 
 def add_post(request, page_number=0):
@@ -211,6 +234,7 @@ def add_post(request, page_number=0):
                 graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
             else:
                 print("adding image")
+                # TODO
                 # doesn't work yet
                 # graph.put_photo(image=open('image', 'rb'), message=message)
 
