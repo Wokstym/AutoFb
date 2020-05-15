@@ -2,16 +2,12 @@ import datetime
 import re
 from collections import defaultdict
 
-from dateutil.tz import UTC
-from django.utils import timezone
-import datetime
 
 import home.utils as utils
 
 import dateutil.parser
 import facebook
 from django.core.paginator import Paginator
-from django.http import Http404
 from django.shortcuts import render
 
 from accounts.forms import InsertWord, validate_word, InsertPost
@@ -93,7 +89,7 @@ def banned_words_page(request, page_number=0):
     user_data = UserData.objects.get(user_id=request.user.id)
     banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words]
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'add_word' in request.POST:
         form = InsertWord(request.POST)
 
         if form.is_valid():
@@ -123,7 +119,16 @@ def banned_words_page(request, page_number=0):
             return render(request, 'home/banned_words.html', {'page_number': page_number,
                                                               'words': banned_words,
                                                               'form': form,
+
                                                               'isValid': False})
+    elif request.method == 'POST' and 'delete_word' in request.POST:
+        word_id = request.POST.dict()['delete_word']
+        word = user_data.pages[page_number].words[int(word_id)]
+        # TODO works only for first word on the list
+        user_data.pages[page_number].words.remove(word)
+        user_data.save()
+        form = InsertWord()
+
     else:
         form = InsertWord()
 
