@@ -42,7 +42,7 @@ class StatPerson(models.Model):
 
 
 class Statistics(models.Model):
-    top_commenters_refresh_date = or_mod.DateTimeField()
+    top_commenters_refresh_date = models.CharField(max_length=254)
     top_commenters = models.ArrayField(
         model_container=StatPerson
     )

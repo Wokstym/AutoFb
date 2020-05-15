@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from dateutil.tz import UTC
 from django.utils import timezone
+import datetime
 
 import home.utils as utils
 
@@ -211,7 +212,8 @@ def statistics_page(request, page_number=0):
         #     top_5_users.append(stat_person)
         # user_data.pages[page_number].statistics.top_commenters = top_5_users
         # TODO cos jest jebniete z tymi datami
-        user_data.pages[page_number].statistics.top_commenters_refresh_date = timezone.now()
+
+        user_data.pages[page_number].statistics.top_commenters_refresh_date = utils.datetime_to_string()
         user_data.save()
 
     top_5_users = user_data.pages[page_number].statistics.top_commenters
@@ -232,6 +234,7 @@ def add_post(request, page_number=0):
                 graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
             else:
                 print("adding image")
+                # TODO
                 # doesn't work yet
                 # graph.put_photo(image=open('image', 'rb'), message=message)
 

@@ -1,6 +1,6 @@
 import json
 import re
-
+from datetime import datetime
 import facebook
 from django.http import Http404
 
@@ -78,3 +78,10 @@ def get_graph_api_inf(user_id, page_number):
 
     return user_data, token, graph, page_id
 
+
+def datetime_to_string():
+    return datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+
+def string_to_datetime(date_str):
+    return datetime.strptime(date_str, "%m/%d/%Y, %H:%M:%S")
