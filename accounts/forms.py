@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from home.models import BannedWord
+from home.utils import datetime_to_string
 
 
 class SignUpForm(UserCreationForm):
@@ -30,6 +31,7 @@ class InsertWord(forms.Form):
 class InsertPost(forms.Form):
     message = forms.CharField(label='Message', max_length=512, required=True)
     image = forms.ImageField(label='Image', required=False)
+    date = forms.CharField(label='Date', max_length=20, initial=datetime_to_string(), required=False)
 
 
 def validate_token_page_id(token, page_id):

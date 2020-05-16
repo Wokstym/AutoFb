@@ -14,9 +14,9 @@ class BannedWord(models.Model):
 
 
 # class Post(models.Model):
-#     message = models.TextField(max_length=1000)
+#     message = models.TextField(max_length=512)
 #     image = models.ImageField()
-#     scheduled_date = models.DateTimeField()
+#     scheduled_date = models.CharField(max_length=20)
 #
 #     class Meta:
 #         abstract = True
