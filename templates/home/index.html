@@ -65,8 +65,9 @@
                 {% if post.video_source %}
 
                 <div class="embed-responsive embed-responsive-16by9">
-                    <iframe class="embed-responsive-item" src={{ post.video_source }}
-                            allowfullscreen></iframe>
+                    <video class="embed-responsive-item" controls>
+                        <source src={{ post.video_source }} type="video/mp4">
+                    </video>
                 </div>
 
 
@@ -81,14 +82,14 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <form method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="comments_to_like" value="{{ post.comments }}">
+                            <input type="hidden" name="post_id_where_comments_to_like" value="{{ post.id }}">
                             <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
                                     style="background-color: dodgerblue" name="like_comments">Like all comments
                             </button>
                         </form>
                         <form method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="comments_to_delete" value="{{ post.comments }}">
+                            <input type="hidden" name="post_id_where_comments_to_delete" value="{{ post.id }}">
                             <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3"
                                     style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
                             </button>
@@ -112,42 +113,47 @@
             <div class="pagination text-center mx-auto">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
-                        {% if posts.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page=1" aria-label="Previous"
-                               style="background-color: black; color: white">
-                                <span aria-hidden="true ">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
+                        <!--                        {% if posts.has_previous %}-->
+                        <!--                        <li class="page-item">-->
+                        <!--                            <a class="page-link" href="?page=1" aria-label="Previous"-->
+                        <!--                               style="background-color: black; color: white">-->
+                        <!--                                <span aria-hidden="true ">&laquo;</span>-->
+                        <!--                                <span class="sr-only">Previous</span>-->
+                        <!--                            </a>-->
+                        <!--                        </li>-->
 
-                        <li class="page-item">
-                            <a class="page-link" style="background-color: black; color: white"
-                               href="?page={{ posts.previous_page_number }}">{{ posts.previous_page_number }}
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% for num in posts.paginator.page_range %}
-                        {% if posts.number == num %}
-                        <li class="page-item"><a class="page-link" style="background-color: black; color: white"
-                                                 href="?page={{ num }}">{{num}} <span
-                                class="sr-only">(current)</span></a></li>
-                        {% endif %}
-                        {% endfor %}
-                        {% if posts.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" style="background-color: black; color: white"
-                               href="?page={{ posts.next_page_number }}">{{ posts.next_page_number }}
-                            </a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" style="background-color: black; color: white"
-                               href="?page={{ posts.paginator.num_pages }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
-                        {% endif %}
+                        <!--                        <li class="page-item">-->
+                        <!--                            <a class="page-link" style="background-color: black; color: white"-->
+                        <!--                               href="?page={{ posts.previous_page_number }}">{{ posts.previous_page_number }}-->
+                        <!--                            </a>-->
+                        <!--                        </li>-->
+                        <!--                        {% endif %}-->
+                        <!--                        {% for num in posts.paginator.page_range %}-->
+                        <!--                        {% if posts.number == num %}-->
+                        <!--                        <li class="page-item"><a class="page-link" style="background-color: black; color: white"-->
+                        <!--                                                 href="?page={{ num }}">{{num}} <span-->
+                        <!--                                class="sr-only">(current)</span></a></li>-->
+                        <!--                        {% endif %}-->
+                        <!--                        {% endfor %}-->
+                        <!--                        {% if posts.has_next %}-->
+                        <!--                        <li class="page-item">-->
+                        <!--                            <a class="page-link" style="background-color: black; color: white"-->
+                        <!--                               href="?page={{ posts.next_page_number }}">{{ posts.next_page_number }}-->
+                        <!--                            </a>-->
+                        <!--                        </li>-->
+                        <!--                        <li class="page-item">-->
+                        <!--                            <a class="page-link" style="background-color: black; color: white"-->
+                        <!--                               href="?page={{ posts.paginator.num_pages }}" aria-label="Next">-->
+                        <!--                                <span aria-hidden="true">&raquo;</span>-->
+                        <!--                                <span class="sr-only">Next</span>-->
+                        <!--                            </a>-->
+                        <!--                        </li>-->
+                        <!--                        {% endif %}-->
+                        <a href="{% url 'index' page_number=page_number after=after%}">
+                            <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
+                                    style="background-color: dodgerblue" name="next_page">Next page
+                            </button>
+                        </a>
                     </ul>
                 </nav>
             </div>

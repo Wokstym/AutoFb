@@ -2,7 +2,7 @@ import datetime
 import re
 from collections import defaultdict
 from math import sqrt
-# import Image
+# from PIL import Image
 from PIL import Image
 
 import home.utils as utils
@@ -14,25 +14,28 @@ from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, redirect
 
-
-from accounts.forms import InsertWord, validate_word, InsertPost
+from accounts.forms import InsertWord, validate_word, InsertPost, InsertedPostID
 from .models import UserData, BannedWord, StatPerson, StatPost, Post
 
 
-def index(request, page_number=0):
+def index(request, page_number=0, after='none'):
+    print(after)
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     data = graph.get_object(id=page_id, fields='name, picture')
-    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=3')
-    utils.pretty_print_json(posts_data)
-    # pretty_print_json(data)
-
     profile_image_url = data['picture']['data']['url']
     page_name = data['name']
-    # posts = data['posts']['data']
+
+    connection_name = 'feed?limit=10'
+
+    if after != 'none':
+        connection_name += '&after=' + after
+
+    posts_data = graph.get_connections(id=page_id, connection_name=connection_name)
+    utils.pretty_print_json(posts_data)
 
     posts = posts_data['data']
-
+    after_this = posts_data['paging']['cursors']['after']
     for post in posts:
         post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
 
@@ -51,35 +54,90 @@ def index(request, page_number=0):
 
     context = {
         'page_number': page_number,
+        'after': after_this,
         'posts': posts,
         'image_url': profile_image_url,
         'name': page_name
     }
-    paginator = Paginator(context['posts'], 3)
-    page = request.GET.get('page')
-    context['posts'] = paginator.get_page(page)
 
     # liking all comments in every post
     if request.method == 'POST' and 'like_all_comments' in request.POST:
-        utils.like_comments_in_every_post(posts, graph, page_id)
+        utils.like_comments_in_every_post(graph, page_id)
 
     # liking all comments in given post
     elif request.method == 'POST' and 'like_comments' in request.POST:
-        utils.like_comments_in_post(request.POST.dict(), graph, page_id)
+        utils.like_comments_in_post(request.POST.dict()['post_id_where_comments_to_like'], graph, page_id)
 
     # deleting comments in every post which including banned words from database
     elif request.method == 'POST' and 'delete_all_comments' in request.POST:
-        utils.delete_comments_in_every_post(posts, graph, user_data.pages[page_number].words, page_id)
+        utils.delete_comments_in_every_post(graph, user_data.pages[page_number].words, page_id)
 
     # deleting comments in given post which including banned words from database
     elif request.method == 'POST' and 'delete_comments' in request.POST:
-        utils.delete_comments_in_post(request.POST.dict(), graph, user_data.pages[page_number].words, page_id)
+        utils.delete_comments_in_post(request.POST.dict()['post_id_where_comments_to_delete'], graph,
+                                      user_data.pages[page_number].words, page_id)
 
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
-        utils.delete_post(request.POST.dict(), graph)
+        utils.delete_post(request.POST.dict()['post_to_delete'], graph)
 
     return render(request, 'home/index.html', context)
+
+
+def single_post(request, page_number=0, post_id=None):
+    user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
+
+    # checking if post with that id exists, allowing singular post id number of required by facebook id prefixed by
+    # page id
+    # ex. 12345 works as well as 9876_12345 where 12345 is post id and 9876 is page id
+    try:
+        post = graph.get_object(id=post_id, fields='comments, object_id, type, created_time')
+    except:
+        try:
+            post_id = page_id + "_" + post_id
+            post = graph.get_object(id=post_id, fields='comments, object_id, type, created_time')
+        except:
+            return render(request, 'home/single_post.html', {})
+    utils.pretty_print_json(post)
+
+    data = graph.get_object(id=page_id, fields='name, picture')
+    profile_image_url = data['picture']['data']['url']
+    page_name = data['name']
+
+    post['created_time'] = dateutil.parser.parse(post['created_time'])
+
+    if post['type'] == "photo":
+        photo_data = graph.get_object(id=post['object_id'], fields='images')
+        post['photo_source'] = photo_data['images'][0]['source']
+
+    elif post['type'] == "video":
+        video = graph.get_object(id=post['object_id'], fields='source')
+        post['video_source'] = video['source']
+
+    if 'comments' in post:
+        post['comments'] = post['comments']['data']
+
+    context = {
+        'page_number': page_number,
+        'post': post,
+        'image_url': profile_image_url,
+        'name': page_name
+    }
+
+    # liking all comments in given post
+    if request.method == 'POST' and 'like_comments' in request.POST:
+        utils.like_comments_in_post(request.POST.dict()['post_id_where_comments_to_like'], graph, page_id)
+
+    # deleting comments in given post which including banned words from database
+    elif request.method == 'POST' and 'delete_comments' in request.POST:
+        utils.delete_comments_in_post(request.POST.dict()['post_id_where_comments_to_delete'], graph,
+                                      user_data.pages[page_number].words, page_id)
+
+    # deleting given post
+    elif request.method == 'POST' and 'delete_post' in request.POST:
+        utils.delete_post(request.POST.dict()['post_to_delete'], graph)
+
+    return render(request, 'home/single_post.html', context)
 
 
 def start_page(request):
@@ -270,3 +328,25 @@ def top_liked_posts(request, page_number=0):
     context['post_data'] = utils.get_post_data(graph, context['top_5_posts'])
 
     return render(request, 'home/statistics/top_x_posts.html', context)
+
+
+def single_post_get(request, page_number=0):
+    if request.method == 'POST' and 'goto_page' in request.POST:
+        form = InsertedPostID(request.POST)
+
+        if form.is_valid():
+            post_id = form.cleaned_data['page_id']
+            return redirect('single_post', page_number=page_number, post_id=post_id )
+
+        else:
+            form = InsertedPostID()
+            return render(request, 'home/banned_words.html', {'page_number': page_number,
+                                                              'form': form,
+                                                              'isValid': False})
+
+    else:
+        form = InsertedPostID
+
+    return render(request, 'home/single_post_get.html', {'page_number': page_number,
+                                                         'form': form,
+                                                         'isValid': True})

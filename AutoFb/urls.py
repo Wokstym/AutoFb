@@ -8,7 +8,10 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('home/', RedirectView.as_view(url='0', permanent=False), name='home'),
-    path('home/<int:page_number>/', include('home.urls'), name='home'),
+    path('home/<int:page_number>', include('home.urls'), name='home'),
+    path('home/<int:page_number>/<slug:after>', include('home.urls'), name='home'),
+    path('post/<int:page_number>/<slug:post_id>', home_view.single_post, name='single_post'),
+    path('post/<int:page_number>/', home_view.single_post_get, name='single_post_get'),
     path('signup/', accounts_view.signup, name='signup'),
     path('add_page/', accounts_view.get_token, name='add_page'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

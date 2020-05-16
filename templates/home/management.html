@@ -5,39 +5,48 @@
 {% block content %}
 <div class="container mt-5 col-12">
     <div class="row justify-content-center">
-            <div class="col-lg-10 offset-lg-1 my-5 text-center mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-2" style="color: black">Management Panel</h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th scope="col">Option</th>
-                                <th scope="col">Description</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <a href="{% url 'banned_words' page_number=page_number%}">Banned Words</a>
-                                </td>
-                                <td>
-                                    You can add banned words to your database and then delete posts that contain those words.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="{% url 'add_post' page_number=page_number%}">Add post</a>
-                                </td>
-                                <td>
-                                    You can add posts to your fanpage.
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <div class="col-lg-10 offset-lg-1 my-5 text-center mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-2" style="color: black">Management Panel</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Option</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <a href="{% url 'banned_words' page_number=page_number%}">Banned Words</a>
+                            </td>
+                            <td>
+                                You can add banned words to your database and then delete posts that contain those
+                                words.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'add_post' page_number=page_number%}">Add post</a>
+                            </td>
+                            <td>
+                                You can add posts to your fanpage.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'single_post_get' page_number=page_number%}">Post by ID</a>
+                            </td>
+                            <td>
+                                Manage post by id
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
     </div>
 </div>
 

@@ -22,51 +22,44 @@ def pretty_print_json(json_string):
     print(json.dumps(json_string, indent=4))
 
 
-def like_comments_in_every_post(posts, graph, page_id):
+def like_comments_in_every_post( graph, page_id):
+    posts = graph.get_all_connections(id=page_id, connection_name='feed?&limit=50&fields=comments')
     for post in posts:
         if 'comments' in post:
-            for comment in post['comments']:
-                if comment["from"]["id"] != page_id:
-                    graph.put_like(object_id=comment['id'])
+            like_comments_in_post(post['id'], graph, page_id)
 
 
-def like_comments_in_post(data_dict, graph, page_id):
-    split_comments = json.loads(data_dict['comments_to_like'].replace("'", '"'))
-    pretty_print_json(split_comments)
-    for comment in split_comments:
+def like_comments_in_post(post_id, graph, page_id):
+    comments = graph.get_all_connections(id=post_id, connection_name='comments?&summary=total_count&limit=10000000000')
+
+    for comment in comments:
         if comment["from"]["id"] != page_id:
             graph.put_like(object_id=comment["id"])
 
 
-def delete_comments_in_every_post(posts, graph, banned_words, page_id):
-    array_with_banned_words = [banned_word.word for banned_word in banned_words]
+def delete_comments_in_every_post(graph, banned_words, page_id):
+    posts = graph.get_all_connections(id=page_id, connection_name='feed?&limit=50&fields=comments')
 
     for post in posts:
         if 'comments' in post:
-            delete_comments_from_json(post['comments'], graph, array_with_banned_words, page_id)
+            delete_comments_in_post(post['id'], graph, banned_words, page_id)
 
 
-def delete_comments_in_post(data_dict, graph, banned_words, page_id):
+def delete_comments_in_post(post_id, graph, banned_words, page_id):
     array_with_banned_words = [word.word for word in banned_words]
-    fix_split_comments_json = json.loads(data_dict['comments_to_delete'].replace("'", '"'))
-    delete_comments_from_json(fix_split_comments_json, graph, array_with_banned_words, page_id)
+    comments = graph.get_all_connections(id=post_id, connection_name='comments?&summary=total_count&limit=10000000000')
 
-
-def delete_comments_from_json(comments, graph, banned_words_arr_str, page_id):
     for comment in comments:
-        print("messsage= " + comment["message"])
-
         if comment["from"]["id"] != page_id:
+            print("messsage= " + comment["message"])
             for word in split_words(comment["message"]):
                 print("\tword= " + word)
-                if word in banned_words_arr_str:
+                if word in array_with_banned_words:
                     graph.delete_object(comment["id"])
                     break
 
 
-def delete_post(data_dict, graph):
-    post_id = data_dict['post_to_delete']
-    print(post_id)
+def delete_post(post_id, graph):
     graph.delete_object(id=post_id)
 
 
@@ -89,10 +82,12 @@ def datetime_to_string():
 
 def string_to_datetime(date_str):
     return datetime.strptime(date_str, "%d/%m/%Y, %H:%M")
-  
-  
+
+
 def get_post_data(graph, top_5_posts):
     context_post_data = []
+    if top_5_posts is None:
+        return context_post_data
     for post in top_5_posts:
         post_data = graph.get_connections(
             id=post.post_id,
@@ -271,4 +266,3 @@ def refresh_top_likes(graph, page_id, user_id, page_number):
     user_data.pages[page_number].statistics.top_liked_posts = top_5_posts
     user_data.pages[page_number].statistics.top_liked_posts_refresh_date = datetime_to_string()
     user_data.save()
-

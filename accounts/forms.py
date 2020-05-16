@@ -28,6 +28,10 @@ class InsertWord(forms.Form):
         fields = 'word'
 
 
+class InsertedPostID(forms.Form):
+    page_id = forms.CharField(label='Page ID', max_length=100, required=True)
+
+
 class InsertPost(forms.Form):
     message = forms.CharField(label='Message', max_length=512, required=True)
     image = forms.ImageField(label='Image', required=False)

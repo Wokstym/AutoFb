@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/home/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-12">
+    {% if post %}
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2 my-4">
+            <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
+                <div class="row  my-3 card-body">
+                    {% if image_url %}
+                    <div class="col-md-2">
+                        <img src={{ image_url }} class="rounded-circle" alt="...">
+
+                    </div>
+                    {% endif %}
+
+                    <div class="col-md-5">
+                        <p class="lead">{{name}}
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <p class="card-text">{{ post.created_time }}</p>
+                    <br>
+                    <hr class="line mb-5">
+                    <h4 class="card-title">{{post.message}}</h4>
+                </div>
+
+                {% if post.photo_source %}
+                <div class="container col-lg-12 text-center mx-auto">
+                    <img src={{ post.photo_source }} class="card-img-top" alt="...">
+                </div>
+
+                {% endif %}
+
+                {% if post.video_source %}
+
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video class="embed-responsive-item" controls>
+                        <source src={{ post.video_source }} type="video/mp4">
+                    </video>
+                </div>
+
+
+                {% endif %}
+
+                <div class="card-body">
+                    <br>
+                    <hr class="line">
+                </div>
+
+                <div class="col-12 text-center my-3">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id_where_comments_to_like" value="{{ post.id }}">
+                            <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
+                                    style="background-color: dodgerblue" name="like_comments">Like all comments
+                            </button>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id_where_comments_to_delete" value="{{ post.id }}">
+                            <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3"
+                                    style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
+                            </button>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_to_delete" value="{{ post.id }}">
+                            <button type="submit" id="checkButton" class="btn btn-dark ml-lg-5"
+                                    style="background-color: darkred" name="delete_post">Delete post
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    {% else %}
+    <div class="alert alert-dark" role="alert">
+       No such post with provided id. To get post id you could use external tool such as linked <a href="https://commentpicker.com/facebook-post-id-finder.php">here</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
