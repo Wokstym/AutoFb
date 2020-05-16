@@ -34,11 +34,11 @@
                             <th scope="row">{{ post.position }}</th>
                             <td><a href="http://facebook.com/{{ post.post_id }}">link</a></td>
 
-                            {% if post.reactions_nr %}
+                            {% if post.reactions_nr != None %}
                             <td>{{post.reactions_nr}}</td>
-                            {% elif post.shares_nr %}
+                            {% elif post.shares_nr != None %}
                             <td>{{post.shares_nr}}</td>
-                            {% elif post.comments_nr %}
+                            {% elif post.comments_nr != None %}
                             <td>{{post.comments_nr}}</td>
                             {% endif %}
                         </tr>

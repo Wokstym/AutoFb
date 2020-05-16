@@ -2,7 +2,7 @@ import datetime
 import re
 from collections import defaultdict
 from math import sqrt
-# import Image
+# from PIL import Image
 from PIL import Image
 
 import home.utils as utils
@@ -61,23 +61,23 @@ def index(request, page_number=0):
 
     # liking all comments in every post
     if request.method == 'POST' and 'like_all_comments' in request.POST:
-        utils.like_comments_in_every_post(posts, graph, page_id)
+        utils.like_comments_in_every_post( graph, page_id)
 
     # liking all comments in given post
     elif request.method == 'POST' and 'like_comments' in request.POST:
-        utils.like_comments_in_post(request.POST.dict(), graph, page_id)
+        utils.like_comments_in_post(request.POST.dict()['post_id_where_comments_to_like'], graph, page_id)
 
     # deleting comments in every post which including banned words from database
     elif request.method == 'POST' and 'delete_all_comments' in request.POST:
-        utils.delete_comments_in_every_post(posts, graph, user_data.pages[page_number].words, page_id)
+        utils.delete_comments_in_every_post(graph, user_data.pages[page_number].words, page_id)
 
     # deleting comments in given post which including banned words from database
     elif request.method == 'POST' and 'delete_comments' in request.POST:
-        utils.delete_comments_in_post(request.POST.dict(), graph, user_data.pages[page_number].words, page_id)
+        utils.delete_comments_in_post(request.POST.dict()['post_id_where_comments_to_delete'], graph, user_data.pages[page_number].words, page_id)
 
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
-        utils.delete_post(request.POST.dict(), graph)
+        utils.delete_post(request.POST.dict()['post_to_delete'], graph)
 
     return render(request, 'home/index.html', context)
 

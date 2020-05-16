@@ -81,14 +81,14 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <form method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="comments_to_like" value="{{ post.comments }}">
+                            <input type="hidden" name="post_id_where_comments_to_like" value="{{ post.id }}">
                             <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
                                     style="background-color: dodgerblue" name="like_comments">Like all comments
                             </button>
                         </form>
                         <form method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="comments_to_delete" value="{{ post.comments }}">
+                            <input type="hidden" name="post_id_where_comments_to_delete" value="{{ post.id }}">
                             <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3"
                                     style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
                             </button>
