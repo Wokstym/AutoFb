@@ -36,8 +36,11 @@ def index(request, page_number=0, after='none'):
     posts = posts_data['data']
     after_this = posts_data['paging']['cursors']['after']
     for post in posts:
-        post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
-
+        post_data = graph.get_connections(id=post['id'],
+                                          connection_name='?&fields=reactions.limit(0).summary(total_count),shares,'
+                                                          'comments.limit(0).summary('
+                                                          'total_count), object_id, type, created_time, message'
+                                          )
         post['created_time'] = dateutil.parser.parse(post['created_time'])
 
         if post_data['type'] == "photo":
@@ -50,6 +53,18 @@ def index(request, page_number=0, after='none'):
 
         if 'comments' in post_data:
             post['comments'] = post_data['comments']['data']
+            post['comments_nr'] = post_data['comments']['summary']['total_count']
+        else:
+            post['comments_nr'] = 0
+        if 'shares' in post_data:
+            post['shares_nr'] = post_data['shares']['count']
+        else:
+            post['shares_nr'] = 0
+
+        if 'reactions' in post_data:
+            post['reactions_nr'] = post_data['reactions']['summary']['total_count']
+        else:
+            post['reactions_nr'] = 0
 
     context = {
         'page_number': page_number,
@@ -330,7 +345,7 @@ def single_post_get(request, page_number=0):
 
         if form.is_valid():
             post_id = form.cleaned_data['page_id']
-            return redirect('single_post', page_number=page_number, post_id=post_id )
+            return redirect('single_post', page_number=page_number, post_id=post_id)
 
         else:
             form = InsertedPostID()

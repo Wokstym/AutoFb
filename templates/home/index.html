@@ -74,6 +74,22 @@
                 {% endif %}
 
                 <div class="card-body">
+                    <div class="col-12 text-center mt-3">
+                    <div class="row" style="color: white">
+                        <div class="col-lg-4">
+                            <i class="icon-thumbs-up-alt"></i>
+                            Reactions: {{post.reactions_nr}}
+                        </div>
+                        <div class="col-lg-4">
+                            <i class="icon-comments-alt"></i>
+                            Comments: {{post.comments_nr}}
+                        </div>
+                        <div class="col-lg-4">
+                            <i class="icon-share"></i>
+                            Shares: {{post.shares_nr}}
+                        </div>
+                    </div>
+                </div>
                     <br>
                     <hr class="line">
                 </div>
