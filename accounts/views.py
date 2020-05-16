@@ -31,11 +31,19 @@ def get_token(request):
             page_id = form.cleaned_data['page_id']
             if validate_token_page_id(token, page_id):
                 current_user = request.user
-                userData = UserData.objects.get(user_id=current_user.id)
-                statistics = Statistics(top_commenters=[])
-                page = Page(page_id=page_id, token=token, words=[], statistics=statistics)
-                userData.pages.append(page)
-                userData.save()
+                user_data = UserData.objects.get(user_id=current_user.id)
+                page = Page(
+                    page_id=page_id,
+                    token=token,
+                    words=[],
+                    statistics=Statistics(
+                        top_commenters=[],
+                        top_liked_posts=[],
+                        top_commented_posts=[],
+                        top_shared_posts=[])
+                )
+                user_data.pages.append(page)
+                user_data.save()
                 return redirect('home')
             else:
                 return render(request, 'accounts/add_page.html', {'form': form, 'isValid': False})

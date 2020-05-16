@@ -16,9 +16,8 @@
 
             <div class="card">
                 <div class="card-body">
-
                     <h3 class="card-title text-center mb-2" style="color: black">Top 5 commenters</h3>
-                    <h5 class="card-title text-center mb-2" >Last refreshed: {{last_refresh}}</h5>
+                    <h5 class="card-title text-center mb-2">Last refreshed: {{commenters_last_refresh}}</h5>
                     <table class="table">
                         <thead>
                         <tr>
@@ -29,7 +28,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for user in top_5_users %}
+                        {% for user in top_5_commenters %}
                         <tr>
                             <th scope="row">{{ user.position }}</th>
                             <td><img src={{ user.photo_url }} class="rounded-circle" alt="..."></td>
