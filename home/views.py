@@ -14,7 +14,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 
 from accounts.forms import InsertWord, validate_word, InsertPost, InsertedPostID
-from .models import UserData, BannedWord, StatPerson, StatPost, Post
+from .models import UserData, BannedWord, StatPerson, StatPost
 
 
 def index(request, page_number=0, after='none'):
@@ -252,34 +252,21 @@ def top_commenters(request, page_number=0):
 def add_post(request, page_number=0):
     if request.method == 'POST':
         form = InsertPost(request.POST, request.FILES)
-        print(request.FILES)
+
         if form.is_valid():
             message = form.cleaned_data['message']
             image = form.cleaned_data.get('image')
-            date = form.cleaned_data['date']
 
-            user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
+            _, _, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
             if image is None:
-                if utils.datetime_to_string() > date:
-                    graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
-                else:
-                    # TODO add to scheduler
-                    post = Post(message=message, image=None, scheduled_date=date, image_bytes=None)
-                    user_data.pages[page_number].posts.append(post)
-                    user_data.save()
+                graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
             else:
                 img = Image.open(image, mode='r')
                 img_byte_array = io.BytesIO()
                 img.save(img_byte_array, format=img.format)
                 img_byte_array = img_byte_array.getvalue()
 
-                if utils.datetime_to_string() > date:
-                    graph.put_photo(image=img_byte_array, message=message)
-                else:
-                    # TODO add to scheduler
-                    post = Post(message=message, image=image, scheduled_date=date, image_bytes=img_byte_array)
-                    user_data.pages[page_number].posts.append(post)
-                    user_data.save()
+                graph.put_photo(image=img_byte_array, message=message)
 
         return render(request, 'home/add_post.html', {'page_number': page_number,
                                                       'form': InsertPost(),
