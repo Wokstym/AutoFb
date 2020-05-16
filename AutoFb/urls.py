@@ -18,8 +18,11 @@ urlpatterns = [
     path('management/', home_view.management_page, name='management'),
     path('management/<int:page_number>/', home_view.management_page, name='management'),
     path('management/banned_words/<int:page_number>/', home_view.banned_words_page, name='banned_words'),
-    path('statistics/<int:page_number>/', home_view.statistics_page, name='statistics'),
     path('pages/', home_view.pages, name='pages'),
-    path('statistics/<int:page_number>/', home_view.statistics_page, name='statistics'),
+    path('statistics/<int:page_number>/', home_view.statistics, name='statistics'),
+    path('statistics/commenters/<int:page_number>/', home_view.top_commenters, name='Top 5 commenters'),
+    path('statistics/liked/<int:page_number>/', home_view.top_liked_posts, name='Top 5 liked posts'),
+    path('statistics/shared/<int:page_number>/', home_view.top_shared_posts, name='Top 5 shared posts'),
+    path('statistics/commented/<int:page_number>/', home_view.top_commented_posts, name='Top 5 commented posts'),
     path('management/add_post/<int:page_number>/', home_view.add_post, name='add_post')
 ]

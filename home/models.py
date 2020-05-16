@@ -25,6 +25,20 @@ class BannedWord(models.Model):
 #         return self.message
 #
 
+class StatPost(models.Model):
+    position = models.IntegerField()
+    post_id = models.CharField(max_length=254)
+    reactions_nr = models.IntegerField(blank=True)
+    shares_nr = models.IntegerField(blank=True)
+    comments_nr = models.IntegerField(blank=True)
+
+    class Meta:
+        abstract = True
+
+    def str(self):
+        return self.post_id
+
+
 class StatPerson(models.Model):
     position = models.IntegerField()
     name = models.CharField(max_length=254)
@@ -37,14 +51,26 @@ class StatPerson(models.Model):
     def str(self):
         return self.position
 
-    def __unicode__(self):
-        return self.position
-
 
 class Statistics(models.Model):
-    top_commenters_refresh_date = or_mod.DateTimeField()
+    top_commenters_refresh_date = models.CharField(max_length=254)
     top_commenters = models.ArrayField(
         model_container=StatPerson
+    )
+
+    top_liked_posts_refresh_date = models.CharField(max_length=254)
+    top_liked_posts = models.ArrayField(
+        model_container=StatPost
+    )
+
+    top_commented_posts_refresh_date = models.CharField(max_length=254)
+    top_commented_posts = models.ArrayField(
+        model_container=StatPost
+    )
+
+    top_shared_posts_refresh_date = models.CharField(max_length=254)
+    top_shared_posts = models.ArrayField(
+        model_container=StatPost
     )
 
     class Meta:

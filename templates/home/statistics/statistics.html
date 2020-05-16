@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-12">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 offset-lg-1 my-5 text-center mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-2" style="color: black">Statistics</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Option</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <a href="{% url 'Top 5 commenters' page_number=page_number%}">Top 5 commenters</a>
+                            </td>
+                            <td>
+                                See top 5 commenters on your page!
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'Top 5 liked posts' page_number=page_number%}">Top 5 liked posts</a>
+                            </td>
+                            <td>
+                                See top 5 liked posts on your page
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'Top 5 shared posts' page_number=page_number%}">Top 5 shared posts</a>
+                            </td>
+                            <td>
+                                See top 5 shared posts on your page
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{% url 'Top 5 commented posts' page_number=page_number%}">Top 5 commented
+                                    posts</a>
+                            </td>
+                            <td>
+                                See top 5 commented posts on your page
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

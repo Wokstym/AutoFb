@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/home/statistics.css' %}">
+<link rel="stylesheet" href="{% static 'css/home/index.css' %}">
+{% endblock %}
+
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-12">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 offset-lg-2 my-4 text-center mx-auto">
+
+            <div class="card" style="background-color:White">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-2" style="color: black">Top 5</h3>
+                    <!-- TODO make title and th text differ in each type-->
+                    <h5 class="card-title text-center mb-2" style="color: black">Last refreshed: {{last_refresh}}</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Link</th>
+                            <th scope="col">nr</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in top_5_posts %}
+                        <tr>
+                            <th scope="row">{{ post.position }}</th>
+                            <td><a href="http://facebook.com/{{ post.post_id }}">link</a></td>
+
+                            {% if post.reactions_nr %}
+                            <td>{{post.reactions_nr}}</td>
+                            {% elif post.shares_nr %}
+                            <td>{{post.shares_nr}}</td>
+                            {% elif post.comments_nr %}
+                            <td>{{post.comments_nr}}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-offset-lg-8 text-center mx-auto">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark" name="refresh_data"
+                    style="background-color: rgb(40,40,40)">Refresh data
+            </button>
+        </form>
+    </div>
+    {% for post in post_data %}
+    <div class="col-lg-8 offset-lg-2 my-4">
+
+        <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
+
+            <div class="card-body">
+                <p class="card-text">{{ post.created_time }}</p>
+                <br>
+                <hr class="line mb-5">
+                <h4 class="card-title">{{post.message}}</h4>
+            </div>
+
+            {% if post.photo_source %}
+            <div class="container col-lg-12 text-center mx-auto">
+                <img src={{ post.photo_source }} class="card-img-top" alt="...">
+            </div>
+
+            {% endif %}
+
+            {% if post.video_source %}
+
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src={{ post.video_source }}
+                        allowfullscreen></iframe>
+            </div>
+
+
+            {% endif %}
+
+            <div class="card-body">
+                <br>
+                <hr class="line">
+            </div>
+
+            <div class="col-12 text-center my-3">
+                <div class="row " style="color: white">
+                    <div class="col-sm">Reactions: {{post.reactions_nr}}</div>
+                    <div class="col-sm">Comments: {{post.comments_nr}}</div>
+                    <div class="col-sm">Shares: {{post.shares_nr}}</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+
+</div>
+
+{% endblock %}
