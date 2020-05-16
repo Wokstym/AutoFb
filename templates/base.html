@@ -31,7 +31,9 @@
             </li>
             {% endif %}
             {% if page_number is not None %}
-            <li class="nav-item">
+
+
+             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' page_number=page_number%}">Posts</a>
             </li>
             <li class="nav-item">

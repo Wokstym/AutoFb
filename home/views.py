@@ -14,17 +14,25 @@ from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import render, redirect
 
-
 from accounts.forms import InsertWord, validate_word, InsertPost
 from .models import UserData, BannedWord, StatPerson, StatPost, Post
 
 
-def index(request, page_number=0):
+def index(request, page_number=0, after='none'):
+    print(after)
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     data = graph.get_object(id=page_id, fields='name, picture')
-    posts_data = graph.get_connections(id=page_id, connection_name='feed?limit=3')
+
+    connection_name = 'feed?limit=10'
+
+    if after != 'none':
+        connection_name += '&after=' + after
+
+    posts_data = graph.get_connections(id=page_id, connection_name=connection_name)
     utils.pretty_print_json(posts_data)
+
+    # posts = graph.get_all_connections(id=page_id, connection_name='feed?&limit=50')
     # pretty_print_json(data)
 
     profile_image_url = data['picture']['data']['url']
@@ -32,7 +40,7 @@ def index(request, page_number=0):
     # posts = data['posts']['data']
 
     posts = posts_data['data']
-
+    after_this = posts_data['paging']['cursors']['after']
     for post in posts:
         post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
 
@@ -51,17 +59,18 @@ def index(request, page_number=0):
 
     context = {
         'page_number': page_number,
+        'after': after_this,
         'posts': posts,
         'image_url': profile_image_url,
         'name': page_name
     }
-    paginator = Paginator(context['posts'], 3)
-    page = request.GET.get('page')
-    context['posts'] = paginator.get_page(page)
+    # paginator = Paginator(context['posts'], 3)
+    # page = request.GET.get('page')
+    # context['posts'] = paginator.get_page(page)next_page
 
     # liking all comments in every post
     if request.method == 'POST' and 'like_all_comments' in request.POST:
-        utils.like_comments_in_every_post( graph, page_id)
+        utils.like_comments_in_every_post(graph, page_id)
 
     # liking all comments in given post
     elif request.method == 'POST' and 'like_comments' in request.POST:
@@ -73,7 +82,8 @@ def index(request, page_number=0):
 
     # deleting comments in given post which including banned words from database
     elif request.method == 'POST' and 'delete_comments' in request.POST:
-        utils.delete_comments_in_post(request.POST.dict()['post_id_where_comments_to_delete'], graph, user_data.pages[page_number].words, page_id)
+        utils.delete_comments_in_post(request.POST.dict()['post_id_where_comments_to_delete'], graph,
+                                      user_data.pages[page_number].words, page_id)
 
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
