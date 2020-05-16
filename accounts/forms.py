@@ -31,7 +31,7 @@ class InsertWord(forms.Form):
 class InsertPost(forms.Form):
     message = forms.CharField(label='Message', max_length=512, required=True)
     image = forms.ImageField(label='Image', required=False)
-    date = forms.CharField(label='Date', max_length=20, initial=datetime_to_string(), required=False)
+    date = forms.CharField(label='Date', max_length=17, initial=datetime_to_string(), required=False)
 
 
 def validate_token_page_id(token, page_id):

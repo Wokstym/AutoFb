@@ -237,7 +237,8 @@ def top_commented_posts(request, page_number=0):
 
     if request.method == 'POST' and 'refresh_data' in request.POST:
         utils.refresh_top_commented(graph, page_id, request.user.id, page_number)
-        redirect('Top 5 commented posts')
+        # redirect('Top 5 commented posts')
+        redirect('home/statistics/top_x_posts.html')
 
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_commented_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_commented_posts_refresh_date
