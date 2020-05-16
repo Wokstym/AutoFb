@@ -10,10 +10,7 @@
 <div class="container mt-5 col-12">
     {% if post %}
     <div class="row">
-
-
         <div class="col-lg-8 offset-lg-2 my-4">
-
             <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
                 <div class="row  my-3 card-body">
                     {% if image_url %}
@@ -91,7 +88,9 @@
 
 
     {% else %}
-    <p style="color: white">No such post</p>
+    <div class="alert alert-dark" role="alert">
+       No such post with provided id. To get post id you could use external tool such as linked <a href="https://commentpicker.com/facebook-post-id-finder.php">here</a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}
