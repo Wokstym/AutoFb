@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
 from djongo import models
 from django.db import models as or_mod
+from django.conf import settings
+from djongo.storage import GridFSStorage
+
+grid_fs_storage = GridFSStorage(collection='myfiles', base_url=''.join([settings.BASE_URL, 'myfiles/']))
 
 
 class BannedWord(models.Model):
@@ -13,17 +17,18 @@ class BannedWord(models.Model):
         return self.word
 
 
-# class Post(models.Model):
-#     message = models.TextField(max_length=512)
-#     image = models.ImageField()
-#     scheduled_date = models.CharField(max_length=20)
-#
-#     class Meta:
-#         abstract = True
-#
-#     def str(self):
-#         return self.message
-#
+class Post(models.Model):
+    message = models.TextField(max_length=512)
+    image = models.ImageField(upload_to="images", storage=grid_fs_storage)
+    scheduled_date = models.CharField(max_length=20)
+    image_bytes = models.BinaryField(max_length=1000)
+
+    class Meta:
+        abstract = True
+
+    def str(self):
+        return self.scheduled_date
+
 
 class StatPost(models.Model):
     position = models.IntegerField()
@@ -88,7 +93,7 @@ class Page(models.Model):
     token = models.CharField(max_length=254)
 
     words = models.ArrayField(model_container=BannedWord)
-    # posts = models.ArrayField(model_container=Post)
+    posts = models.ArrayField(model_container=Post)
 
     statistics = models.EmbeddedField(model_container=Statistics)
 
