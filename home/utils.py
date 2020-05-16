@@ -46,7 +46,7 @@ def delete_comments_in_every_post(graph, banned_words, page_id):
 
 
 def delete_comments_in_post(post_id, graph, banned_words, page_id):
-    array_with_banned_words = [word.word for word in banned_words]
+    array_with_banned_words = [word.word for word in banned_words if word.word is not None]
     comments = graph.get_all_connections(id=post_id, connection_name='comments?&summary=total_count&limit=10000000000')
 
     for comment in comments:

@@ -32,8 +32,8 @@ pip install -r requirements.txt
 - [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
 - [x] usuwanie posta
 ## lab 6 (Maj 19/21)
-- [x] forms do dodawania postu na fanpage (text, zdjęcie, data i czas dodania postu)
-- [ ] forms wstawiania wielu postów na fanpage (texty, zdjecia i okresowość dodawania)
+- [x] usuwanie zakazanych słów z bazy
+- [x] forms do dodawania postu na fanpage (text, zdjęcie)
 - [x] uploading obrazów
 - [ ] scheduling 
 

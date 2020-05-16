@@ -2,7 +2,6 @@ import datetime
 import re
 from collections import defaultdict
 from math import sqrt
-# from PIL import Image
 from PIL import Image
 
 import home.utils as utils
@@ -150,7 +149,8 @@ def management_page(request, page_number=0):
 
 def banned_words_page(request, page_number=0):
     user_data = UserData.objects.get(user_id=request.user.id)
-    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words]
+    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words
+                    if banned_word.word is not None]
 
     if request.method == 'POST' and 'add_word' in request.POST:
         form = InsertWord(request.POST)
@@ -164,7 +164,16 @@ def banned_words_page(request, page_number=0):
 
                 if word not in banned_words:
                     banned_word = BannedWord(word=word)
-                    user_data.pages[page_number].words.append(banned_word)
+                    added_word = False
+                    for i, word in enumerate(user_data.pages[page_number].words):
+                        if word.word is None:
+                            user_data.pages[page_number].words[i] = banned_word
+                            added_word = True
+                            break
+
+                    if not added_word:
+                        user_data.pages[page_number].words.append(banned_word)
+
                     user_data.save()
                 form = InsertWord()
                 return render(request, 'home/banned_words.html', {'page_number': page_number,
@@ -186,9 +195,7 @@ def banned_words_page(request, page_number=0):
                                                               'isValid': False})
     elif request.method == 'POST' and 'delete_word' in request.POST:
         word_id = request.POST.dict()['delete_word']
-        word = user_data.pages[page_number].words[int(word_id)]
-        # TODO works only for first word on the list
-        user_data.pages[page_number].words.remove(word)
+        user_data.pages[page_number].words[int(word_id)] = BannedWord(word=None)
         user_data.save()
         form = InsertWord()
 
