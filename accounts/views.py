@@ -40,8 +40,7 @@ def get_token(request):
                         top_commenters=[],
                         top_liked_posts=[],
                         top_commented_posts=[],
-                        top_shared_posts=[]),
-                    posts=[]
+                        top_shared_posts=[])
                 )
                 user_data.pages.append(page)
                 user_data.save()

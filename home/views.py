@@ -2,7 +2,6 @@ import datetime
 import re
 from collections import defaultdict
 from math import sqrt
-# from PIL import Image
 from PIL import Image
 
 import home.utils as utils
@@ -15,7 +14,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 
 from accounts.forms import InsertWord, validate_word, InsertPost, InsertedPostID
-from .models import UserData, BannedWord, StatPerson, StatPost, Post
+from .models import UserData, BannedWord, StatPerson, StatPost
 
 
 def index(request, page_number=0, after='none'):
@@ -37,8 +36,11 @@ def index(request, page_number=0, after='none'):
     posts = posts_data['data']
     after_this = posts_data['paging']['cursors']['after']
     for post in posts:
-        post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
-
+        post_data = graph.get_connections(id=post['id'],
+                                          connection_name='?&fields=reactions.limit(0).summary(total_count),shares,'
+                                                          'comments.limit(0).summary('
+                                                          'total_count), object_id, type, created_time, message'
+                                          )
         post['created_time'] = dateutil.parser.parse(post['created_time'])
 
         if post_data['type'] == "photo":
@@ -51,6 +53,18 @@ def index(request, page_number=0, after='none'):
 
         if 'comments' in post_data:
             post['comments'] = post_data['comments']['data']
+            post['comments_nr'] = post_data['comments']['summary']['total_count']
+        else:
+            post['comments_nr'] = 0
+        if 'shares' in post_data:
+            post['shares_nr'] = post_data['shares']['count']
+        else:
+            post['shares_nr'] = 0
+
+        if 'reactions' in post_data:
+            post['reactions_nr'] = post_data['reactions']['summary']['total_count']
+        else:
+            post['reactions_nr'] = 0
 
     context = {
         'page_number': page_number,
@@ -150,7 +164,8 @@ def management_page(request, page_number=0):
 
 def banned_words_page(request, page_number=0):
     user_data = UserData.objects.get(user_id=request.user.id)
-    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words]
+    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words
+                    if banned_word.word is not None]
 
     if request.method == 'POST' and 'add_word' in request.POST:
         form = InsertWord(request.POST)
@@ -164,7 +179,16 @@ def banned_words_page(request, page_number=0):
 
                 if word not in banned_words:
                     banned_word = BannedWord(word=word)
-                    user_data.pages[page_number].words.append(banned_word)
+                    added_word = False
+                    for i, word in enumerate(user_data.pages[page_number].words):
+                        if word.word is None:
+                            user_data.pages[page_number].words[i] = banned_word
+                            added_word = True
+                            break
+
+                    if not added_word:
+                        user_data.pages[page_number].words.append(banned_word)
+
                     user_data.save()
                 form = InsertWord()
                 return render(request, 'home/banned_words.html', {'page_number': page_number,
@@ -186,9 +210,7 @@ def banned_words_page(request, page_number=0):
                                                               'isValid': False})
     elif request.method == 'POST' and 'delete_word' in request.POST:
         word_id = request.POST.dict()['delete_word']
-        word = user_data.pages[page_number].words[int(word_id)]
-        # TODO works only for first word on the list
-        user_data.pages[page_number].words.remove(word)
+        user_data.pages[page_number].words[int(word_id)] = BannedWord(word=None)
         user_data.save()
         form = InsertWord()
 
@@ -245,34 +267,21 @@ def top_commenters(request, page_number=0):
 def add_post(request, page_number=0):
     if request.method == 'POST':
         form = InsertPost(request.POST, request.FILES)
-        print(request.FILES)
+
         if form.is_valid():
             message = form.cleaned_data['message']
             image = form.cleaned_data.get('image')
-            date = form.cleaned_data['date']
 
-            user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
+            _, _, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
             if image is None:
-                if utils.datetime_to_string() > date:
-                    graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
-                else:
-                    # TODO add to scheduler
-                    post = Post(message=message, image=None, scheduled_date=date, image_bytes=None)
-                    user_data.pages[page_number].posts.append(post)
-                    user_data.save()
+                graph.put_object(parent_object='me', message=message, page_number=page_id, connection_name='feed')
             else:
                 img = Image.open(image, mode='r')
                 img_byte_array = io.BytesIO()
                 img.save(img_byte_array, format=img.format)
                 img_byte_array = img_byte_array.getvalue()
 
-                if utils.datetime_to_string() > date:
-                    graph.put_photo(image=img_byte_array, message=message)
-                else:
-                    # TODO add to scheduler
-                    post = Post(message=message, image=image, scheduled_date=date, image_bytes=img_byte_array)
-                    user_data.pages[page_number].posts.append(post)
-                    user_data.save()
+                graph.put_photo(image=img_byte_array, message=message)
 
         return render(request, 'home/add_post.html', {'page_number': page_number,
                                                       'form': InsertPost(),
@@ -336,7 +345,7 @@ def single_post_get(request, page_number=0):
 
         if form.is_valid():
             post_id = form.cleaned_data['page_id']
-            return redirect('single_post', page_number=page_number, post_id=post_id )
+            return redirect('single_post', page_number=page_number, post_id=post_id)
 
         else:
             form = InsertedPostID()
