@@ -84,11 +84,11 @@ def get_graph_api_inf(user_id, page_number):
 
 
 def datetime_to_string():
-    return datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    return datetime.now().strftime("%d/%m/%Y, %H:%M")
 
 
 def string_to_datetime(date_str):
-    return datetime.strptime(date_str, "%m/%d/%Y, %H:%M:%S")
+    return datetime.strptime(date_str, "%d/%m/%Y, %H:%M")
   
   
 def get_post_data(graph, top_5_posts):
@@ -99,11 +99,23 @@ def get_post_data(graph, top_5_posts):
             connection_name='?&fields=reactions.limit(0).summary(total_count),shares,comments.limit(0).summary('
                             'total_count), object_id, type, created_time, message '
         )
+        if 'shares' in post_data:
+            shares_nr = post_data['shares']['count']
+        else:
+            shares_nr = 0
+        if 'reactions' in post_data:
+            reactions_nr = post_data['reactions']['summary']['total_count']
+        else:
+            reactions_nr = 0
+        if 'comments' in post_data:
+            comments_nr = post_data['comments']['summary']['total_count']
+        else:
+            comments_nr = 0
 
         context_post = {'position': post.position,
-                        'reactions_nr': post_data['reactions']['summary']['total_count'],
-                        'shares_nr': post_data['shares']['count'],
-                        'comments_nr': post_data['comments']['summary']['total_count'],
+                        'reactions_nr': reactions_nr,
+                        'shares_nr': shares_nr,
+                        'comments_nr': comments_nr,
                         'created_time': dateutil.parser.parse(post_data['created_time'])}
 
         if 'message' in post_data:
@@ -172,8 +184,8 @@ def refresh_top_commenters(graph, page_id, user_id, page_number):
 
         top_5_users.append(stat_person)
     user_data.pages[page_number].statistics.top_commenters = top_5_users
-    # TODO cos jest jebniete z tymi datami
-    user_data.pages[page_number].statistics.top_commenters_refresh_date = timezone.now()
+
+    user_data.pages[page_number].statistics.top_commenters_refresh_date = datetime_to_string()
     user_data.save()
 
 
