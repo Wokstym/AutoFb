@@ -18,7 +18,9 @@
             <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-dark" name="like_all_comments"
-                        style="background-color: rgb(40,40,40)">Like comments in every post
+                        style="background-color: rgb(40,40,40)">
+                    <i class="icon-thumbs-up-alt"></i>
+                    Like comments in every post
                 </button>
             </form>
         </div>
@@ -26,7 +28,9 @@
             <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-dark" name="delete_all_comments"
-                        style="background-color: rgb(40,40,40)">Delete comments with banned words in every post
+                        style="background-color: rgb(40,40,40)">
+                    <i class="icon-remove"></i>
+                    Delete comments with banned words in every post
                 </button>
             </form>
         </div>

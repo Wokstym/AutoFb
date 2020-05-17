@@ -6,7 +6,7 @@
 <div class="container mt-5 col-12">
     <div class="row justify-content-center">
         <div class="col-lg-10 offset-lg-1 my-5 text-center mx-auto">
-            <div class="card">
+            <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
                 <div class="card-body">
                     <h3 class="card-title text-center mb-2" style="color: black">Statistics</h3>
                     <table class="table">
@@ -19,15 +19,21 @@
                         <tbody>
                         <tr>
                             <td>
-                                <a href="{% url 'Top 5 commenters' page_number=page_number%}">Top 5 commenters</a>
+                                <a href="{% url 'Top 5 commenters' page_number=page_number%}">
+                                    <i class="icon-group"></i>
+                                    Top 5 commenters
+                                </a>
                             </td>
                             <td>
-                                See top 5 commenters on your page!
+                                See top 5 commenters on your page
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <a href="{% url 'Top 5 liked posts' page_number=page_number%}">Top 5 liked posts</a>
+                                <a href="{% url 'Top 5 liked posts' page_number=page_number%}">
+                                    <i class="icon-thumbs-up"></i>
+                                    Top 5 liked posts
+                                </a>
                             </td>
                             <td>
                                 See top 5 liked posts on your page
@@ -35,7 +41,10 @@
                         </tr>
                         <tr>
                             <td>
-                                <a href="{% url 'Top 5 shared posts' page_number=page_number%}">Top 5 shared posts</a>
+                                <a href="{% url 'Top 5 shared posts' page_number=page_number%}">
+                                    <i class="icon-share"></i>
+                                    Top 5 shared posts
+                                </a>
                             </td>
                             <td>
                                 See top 5 shared posts on your page
@@ -43,8 +52,10 @@
                         </tr>
                         <tr>
                             <td>
-                                <a href="{% url 'Top 5 commented posts' page_number=page_number%}">Top 5 commented
-                                    posts</a>
+                                <a href="{% url 'Top 5 commented posts' page_number=page_number%}">
+                                    <i class="icon-comments"></i>
+                                    Top 5 commented posts
+                                </a>
                             </td>
                             <td>
                                 See top 5 commented posts on your page

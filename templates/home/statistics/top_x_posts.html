@@ -17,22 +17,44 @@
 
             <div class="card" style="background-color:White">
                 <div class="card-body">
-                    <h3 class="card-title text-center mb-2" style="color: black">Top 5</h3>
-                    <!-- TODO make title and th text differ in each type-->
+                    <h3 class="card-title text-center mb-2" style="color: black"><i class="icon-trophy">  </i>
+                        {% if type == "likes" %}
+                            Top 5 liked posts
+                        {% elif type == "shares" %}
+                            Top 5 shared posts
+                        {% elif type == "comments" %}
+                            Top 5 commented posts
+                        {% endif %}
+                    </h3>
                     <h5 class="card-title text-center mb-2" style="color: black">Last refreshed: {{last_refresh}}</h5>
                     <table class="table">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Link</th>
-                            <th scope="col">nr</th>
+                            <th scope="col">
+                                <i class="icon-sort-by-order"></i>
+                            </th>
+                            <th scope="col">
+                                <i class="icon-facebook-sign"></i>
+                                Link
+                            </th>
+                            <th scope="col">
+                                {% if type == "likes" %}
+                                    <i class="icon-thumbs-up"></i>
+                                {% elif type == "shares" %}
+                                    <i class="icon-share"></i>
+                                {% elif type == "comments" %}
+                                    <i class="icon-comments"></i>
+                                {% endif %}
+                            nr</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for post in top_5_posts %}
                         <tr>
                             <th scope="row">{{ post.position }}</th>
-                            <td><a href="http://facebook.com/{{ post.post_id }}">link</a></td>
+                            <td><a href="http://facebook.com/{{ post.post_id }}">
+                                <i class="icon-external-link"></i>
+                            </a></td>
 
                             {% if post.reactions_nr != None %}
                             <td>{{post.reactions_nr}}</td>
@@ -53,7 +75,7 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-dark" name="refresh_data"
-                    style="background-color: rgb(40,40,40)">Refresh data
+                    style="background-color: rgb(40,40,40)"><i class="icon-refresh">   </i>Refresh data
             </button>
         </form>
     </div>
