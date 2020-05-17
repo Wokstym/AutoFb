@@ -1,4 +1,4 @@
-# Projekt z Programowania w języku Python
+# Project from Programming in Python
 
 [![](https://img.shields.io/badge/Django-2.2.12-red)](https://www.djangoproject.com)
 [![](https://img.shields.io/badge/django_bootstrap4-1.1.1-blue)](https://pypi.org/project/django-bootstrap4/)
@@ -8,38 +8,50 @@
 [![](https://img.shields.io/badge/dnspython-1.16.0-lightgrey)](https://pypi.org/project/dnspython/)
 [![](https://img.shields.io/badge/Pillow-7.1.2-brown)](https://pypi.org/project/Pillow/)
 
-Strona, która służy do automatyzowania zadań związanych z fanpage na facebooku. 
+Page used for automating tasks when managing pages, such as storing not allowed words, that with a push of a button are localized in comments and deleted in choosen post or all posts, liking all comments, deleteting and posting posts. You can also view statistics that are not avaible in facebook such as top 5 most commented, shared and liked posts or top 5 most active commenters.
 
-# Setup
+Project teached us working in a team using branches, merging with master finished aspects and resolving conflicts, overall concept of using API for fetching and posting content and usage of django + mongodb database models, renderign views and Django template language.
+
+## Showcase
+
+![presentation gif](./presentation.gif)
+
+## Setup
 
 ```bash
 pip install -r requirements.txt
 ```
 
-# Roadmap
+## Roadmap
 
-## Lab 3 (Kwiecień 7/9)
-- [x] konfiguracja django
-- [x] baza do przechowywania uzytkownikow i ich danych (wstępnie mongodb)
-## Lab 4 (Kwiecień 21/23) 
-- [x] logowanie/rejestrowanie
-- [x] autoryzacja tokenem
-- [x] strona ze wszystkimi postami z fanpage (do wyboru aktywnosci ktore chcemy wykonac na facebook)
-## Lab 5 (Maj 5/7)
-- [x] wyswietl top komentujących na całej stronie
-- [x] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
-- [x] mozliwość usuwania komentarzy zawierających słowa z bazy którą definiuje użytkownik
-- [x] usuwanie postów
-- [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
-- [x] usuwanie posta
-## lab 6 (Maj 19/21)
-- [x] usuwanie zakazanych słów z bazy
-- [x] forms do dodawania postu na fanpage (text, zdjęcie)
-- [x] uploading obrazów
-- [x] zarządzanie postem po jego id
-- [ ] scheduling 
+### Lab 3 (April 7/9)
 
-## Oddanie projektu (Czerwiec 2/4)
+- [x] Django configuration
+- [x] Database mongo atlas configuration
+
+### Lab 4 (April 21/23)
+
+- [x] Loging and registration
+- [x] Token autorization and storage
+- [x] Main page with posts
+
+### Lab 5 (May 5/7)
+
+- [x] Statistics about top 5 commenters
+- [x] Statistics about top 5 posts with biggest amout of likes/comment/shares
+- [x] Ability to delete comments containign words from database
+- [x] Post deletion
+- [x] Liking all comments in a post/all posts
+
+### lab 6 (May 19/21)
+
+- [x] Deletion of banned words from database
+- [x] Form for adding post with photo
+- [x] Uploading of photos
+- [x] Management of post by its id
+- [ ] Scheduling
+
+### Project submission (June 2/4)
 
 ## Contributors ✨
 
@@ -50,4 +62,3 @@ pip install -r requirements.txt
     <td align="center"><a href="https://github.com/alexmaz99"><img src="https://avatars2.githubusercontent.com/u/56346754?s=460&u=a0c3bd4ae7860a0694db0110f7b10d80434fecd4&v=4" width="100px;" alt=""/><br /><sub><b>Aleksandra Mazur</b></sub></a><br /></td>
   </tr>
 </table>
-
