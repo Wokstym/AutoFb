@@ -34,7 +34,12 @@ def index(request, page_number=0, after='none'):
     utils.pretty_print_json(posts_data)
 
     posts = posts_data['data']
-    after_this = posts_data['paging']['cursors']['after']
+
+    if 'paging' in posts_data:
+        after_this = posts_data['paging']['cursors']['after']
+    else:
+        after_this = None
+
     for post in posts:
         post_data = graph.get_connections(id=post['id'],
                                           connection_name='?&fields=reactions.limit(0).summary(total_count),shares,'
