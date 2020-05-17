@@ -35,7 +35,12 @@ def index(request, page_number=0, after='none'):
     utils.pretty_print_json(posts_data)
 
     posts = posts_data['data']
-    after_this = posts_data['paging']['cursors']['after']
+
+    if 'paging' in posts_data:
+        after_this = posts_data['paging']['cursors']['after']
+    else:
+        after_this = None
+
     for post in posts:
         post_data = graph.get_object(id=post['id'], fields='comments, object_id, type')
 
@@ -336,7 +341,7 @@ def single_post_get(request, page_number=0):
 
         if form.is_valid():
             post_id = form.cleaned_data['page_id']
-            return redirect('single_post', page_number=page_number, post_id=post_id )
+            return redirect('single_post', page_number=page_number, post_id=post_id)
 
         else:
             form = InsertedPostID()
