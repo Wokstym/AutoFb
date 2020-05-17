@@ -1,24 +1,18 @@
-import datetime
+import io
 import re
-from collections import defaultdict
-from math import sqrt
-from PIL import Image
-
-import home.utils as utils
 
 import dateutil.parser
 import facebook
-import io
-from django.core.paginator import Paginator
-from django.http import Http404
+from PIL import Image
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
+import home.utils as utils
 from accounts.forms import InsertWord, validate_word, InsertPost, InsertedPostID
-from .models import UserData, BannedWord, StatPerson, StatPost
+from .models import UserData, BannedWord, StatPost
 
 
 def index(request, page_number=0, after='none'):
-    print(after)
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
 
     data = graph.get_object(id=page_id, fields='name, picture')
@@ -31,8 +25,6 @@ def index(request, page_number=0, after='none'):
         connection_name += '&after=' + after
 
     posts_data = graph.get_connections(id=page_id, connection_name=connection_name)
-    utils.pretty_print_json(posts_data)
-
     posts = posts_data['data']
 
     if 'paging' in posts_data:
@@ -41,11 +33,12 @@ def index(request, page_number=0, after='none'):
         after_this = None
 
     for post in posts:
-        post_data = graph.get_connections(id=post['id'],
-                                          connection_name='?&fields=reactions.limit(0).summary(total_count),shares,'
-                                                          'comments.limit(0).summary('
-                                                          'total_count), object_id, type, created_time, message'
-                                          )
+        post_data = graph.get_connections(
+            id=post['id'],
+            connection_name='?&fields=reactions.limit(0).summary(total_count),shares,'
+                            'comments.limit(0).summary('
+                            'total_count), object_id, type, created_time, message'
+        )
         post['created_time'] = dateutil.parser.parse(post['created_time'])
 
         if post_data['type'] == "photo":
@@ -99,6 +92,7 @@ def index(request, page_number=0, after='none'):
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
         utils.delete_post(request.POST.dict()['post_to_delete'], graph)
+        return HttpResponseRedirect(request.path_info)
 
     return render(request, 'home/index.html', context)
 
@@ -110,37 +104,32 @@ def single_post(request, page_number=0, post_id=None):
     # page id
     # ex. 12345 works as well as 9876_12345 where 12345 is post id and 9876 is page id
     try:
-        post = graph.get_object(id=post_id, fields='comments, object_id, type, created_time')
+        xd = StatPost(
+            position=1,
+            post_id=post_id
+        )
+        post = utils.get_post_data(graph, [xd])[0]
     except:
         try:
             post_id = page_id + "_" + post_id
-            post = graph.get_object(id=post_id, fields='comments, object_id, type, created_time')
+            xd = StatPost(
+                position=1,
+                post_id=post_id
+            )
+            post = utils.get_post_data(graph, [xd])[0]
         except:
             return render(request, 'home/management/single_post.html', {})
-    utils.pretty_print_json(post)
 
-    data = graph.get_object(id=page_id, fields='name, picture')
-    profile_image_url = data['picture']['data']['url']
-    page_name = data['name']
-
-    post['created_time'] = dateutil.parser.parse(post['created_time'])
-
-    if post['type'] == "photo":
-        photo_data = graph.get_object(id=post['object_id'], fields='images')
-        post['photo_source'] = photo_data['images'][0]['source']
-
-    elif post['type'] == "video":
-        video = graph.get_object(id=post['object_id'], fields='source')
-        post['video_source'] = video['source']
-
-    if 'comments' in post:
-        post['comments'] = post['comments']['data']
+    page_data = graph.get_object(id=page_id, fields='name, picture')
+    profile_image_url = page_data['picture']['data']['url']
+    page_name = page_data['name']
 
     context = {
         'page_number': page_number,
         'post': post,
         'image_url': profile_image_url,
-        'name': page_name
+        'name': page_name,
+        'post_id': post_id
     }
 
     # liking all comments in given post
@@ -155,6 +144,7 @@ def single_post(request, page_number=0, post_id=None):
     # deleting given post
     elif request.method == 'POST' and 'delete_post' in request.POST:
         utils.delete_post(request.POST.dict()['post_to_delete'], graph)
+        return HttpResponseRedirect(request.path_info)
 
     return render(request, 'home/management/single_post.html', context)
 
@@ -195,24 +185,26 @@ def banned_words_page(request, page_number=0):
                         user_data.pages[page_number].words.append(banned_word)
 
                     user_data.save()
+                    banned_words = [banned_word.word for banned_word in user_data.pages[page_number].words
+                                    if banned_word.word is not None]
                 form = InsertWord()
                 return render(request, 'home/management/banned_words.html', {'page_number': page_number,
-                                                                  'words': banned_words,
-                                                                  'form': form,
-                                                                  'isValid': True})
+                                                                             'words': banned_words,
+                                                                             'form': form,
+                                                                             'isValid': True})
             else:
                 form = InsertWord()
                 return render(request, 'home/management/banned_words.html', {'page_number': page_number,
-                                                                  'words': banned_words,
-                                                                  'form': form,
-                                                                  'isValid': False})
+                                                                             'words': banned_words,
+                                                                             'form': form,
+                                                                             'isValid': False})
         else:
             form = InsertWord()
             return render(request, 'home/management/banned_words.html', {'page_number': page_number,
-                                                              'words': banned_words,
-                                                              'form': form,
+                                                                         'words': banned_words,
+                                                                         'form': form,
 
-                                                              'isValid': False})
+                                                                         'isValid': False})
     elif request.method == 'POST' and 'delete_word' in request.POST:
         word_id = request.POST.dict()['delete_word']
         user_data.pages[page_number].words[int(word_id)] = BannedWord(word=None)
@@ -223,9 +215,9 @@ def banned_words_page(request, page_number=0):
         form = InsertWord()
 
     return render(request, 'home/management/banned_words.html', {'page_number': page_number,
-                                                      'words': banned_words,
-                                                      'form': form,
-                                                      'isValid': True})
+                                                                 'words': banned_words,
+                                                                 'form': form,
+                                                                 'isValid': True})
 
 
 def pages(request):
@@ -262,6 +254,7 @@ def top_commenters(request, page_number=0):
 
     if request.method == 'POST' and 'refresh_data' in request.POST:
         utils.refresh_top_commenters(graph, page_id, request.user.id, page_number)
+        return HttpResponseRedirect(request.path_info)
 
     context['top_5_commenters'] = user_data.pages[page_number].statistics.top_commenters
     context['commenters_last_refresh'] = user_data.pages[page_number].statistics.top_commenters_refresh_date
@@ -289,21 +282,30 @@ def add_post(request, page_number=0):
                 graph.put_photo(image=img_byte_array, message=message)
 
         return render(request, 'home/management/add_post.html', {'page_number': page_number,
-                                                      'form': InsertPost(),
-                                                      'isValid': True})
+                                                                 'form': InsertPost(),
+                                                                 'isValid': True})
     else:
         return render(request, 'home/management/add_post.html', {'page_number': page_number,
-                                                      'form': InsertPost(),
-                                                      'isValid': False})
+                                                                 'form': InsertPost(),
+                                                                 'isValid': False})
 
 
 def top_shared_posts(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
     user_data = UserData.objects.get(user_id=request.user.id)
-    context = {'page_number': page_number}
+
+    data = graph.get_object(id=page_id, fields='name, picture')
+    profile_image_url = data['picture']['data']['url']
+    page_name = data['name']
+
+    context = {
+        'page_number': page_number,
+        'image_url': profile_image_url,
+        'name': page_name}
 
     if request.method == 'POST' and 'refresh_data' in request.POST:
         utils.refresh_top_shared(graph, page_id, request.user.id, page_number)
+        return HttpResponseRedirect(request.path_info)
 
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_shared_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_shared_posts_refresh_date
@@ -316,17 +318,23 @@ def top_shared_posts(request, page_number=0):
 def top_commented_posts(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
     user_data = UserData.objects.get(user_id=request.user.id)
-    context = {'page_number': page_number}
+
+    data = graph.get_object(id=page_id, fields='name, picture')
+    profile_image_url = data['picture']['data']['url']
+    page_name = data['name']
+    context = {
+        'page_number': page_number,
+        'image_url': profile_image_url,
+        'name': page_name,
+        'type': "comments"}
 
     if request.method == 'POST' and 'refresh_data' in request.POST:
         utils.refresh_top_commented(graph, page_id, request.user.id, page_number)
-        # redirect('Top 5 commented posts')
-        redirect('home/statistics/top_x_posts.html')
+        return HttpResponseRedirect(request.path_info)
 
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_commented_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_commented_posts_refresh_date
     context['post_data'] = utils.get_post_data(graph, context['top_5_posts'])
-    context['type'] = "comments"
 
     return render(request, 'home/statistics/top_x_posts.html', context)
 
@@ -334,10 +342,19 @@ def top_commented_posts(request, page_number=0):
 def top_liked_posts(request, page_number=0):
     user_data, token, graph, page_id = utils.get_graph_api_inf(request.user.id, page_number)
     user_data = UserData.objects.get(user_id=request.user.id)
-    context = {'page_number': page_number}
+
+    data = graph.get_object(id=page_id, fields='name, picture')
+    profile_image_url = data['picture']['data']['url']
+    page_name = data['name']
+
+    context = {
+        'page_number': page_number,
+        'image_url': profile_image_url,
+        'name': page_name}
 
     if request.method == 'POST' and 'refresh_data' in request.POST:
         utils.refresh_top_likes(graph, page_id, request.user.id, page_number)
+        return HttpResponseRedirect(request.path_info)
 
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_liked_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_liked_posts_refresh_date
@@ -352,18 +369,18 @@ def single_post_get(request, page_number=0):
         form = InsertedPostID(request.POST)
 
         if form.is_valid():
-            post_id = form.cleaned_data['page_id']
+            post_id = form.cleaned_data['post_id']
             return redirect('single_post', page_number=page_number, post_id=post_id)
 
         else:
             form = InsertedPostID()
             return render(request, 'home/management/banned_words.html', {'page_number': page_number,
-                                                              'form': form,
-                                                              'isValid': False})
+                                                                         'form': form,
+                                                                         'isValid': False})
 
     else:
         form = InsertedPostID
 
     return render(request, 'home/management/single_post_get.html', {'page_number': page_number,
-                                                         'form': form,
-                                                         'isValid': True})
+                                                                    'form': form,
+                                                                    'isValid': True})

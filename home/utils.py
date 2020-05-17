@@ -1,12 +1,11 @@
 import json
 import re
-from datetime import datetime
 from collections import defaultdict
+from datetime import datetime
 
 import dateutil
 import facebook
 from django.http import Http404
-from django.utils import timezone
 
 from home.models import UserData, StatPerson, StatPost
 
@@ -22,7 +21,7 @@ def pretty_print_json(json_string):
     print(json.dumps(json_string, indent=4))
 
 
-def like_comments_in_every_post( graph, page_id):
+def like_comments_in_every_post(graph, page_id):
     posts = graph.get_all_connections(id=page_id, connection_name='feed?&limit=50&fields=comments')
     for post in posts:
         if 'comments' in post:
@@ -137,7 +136,6 @@ def refresh_top_commenters(graph, page_id, user_id, page_number):
         posts_id = [dictionary_with_comments['id'] for dictionary_with_comments in posts_data['data']]
 
         list_of_posts_with_comments = graph.get_objects(ids=posts_id, fields='comments')
-        # utils.pretty_print_json( list_of_posts_with_comments)
         comments_data = [comments_dict for comments_dict in
                          [comments_in_posts[1] for comments_in_posts in list_of_posts_with_comments.items()] if
                          'comments' in comments_dict]
@@ -148,7 +146,6 @@ def refresh_top_commenters(graph, page_id, user_id, page_number):
             post_id = comments_in_one_post['id']
 
             while cursor_comments_data['data']:
-                # print(len(cursor_comments_data['data']))
                 list_of_commenters_id += [comment['from']['id'] for comment in cursor_comments_data['data'] if
                                           comment['from']['id'] != page_id]
 

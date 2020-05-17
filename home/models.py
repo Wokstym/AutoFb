@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from djongo import models
-from django.db import models as or_mod
 from django.conf import settings
 from djongo.storage import GridFSStorage
 

@@ -17,13 +17,13 @@
 
             <div class="card" style="background-color:White">
                 <div class="card-body">
-                    <h3 class="card-title text-center mb-2" style="color: black"><i class="icon-trophy">  </i>
+                    <h3 class="card-title text-center mb-2" style="color: black"><i class="icon-trophy"> </i>
                         {% if type == "likes" %}
-                            Top 5 liked posts
+                        Top 5 liked posts
                         {% elif type == "shares" %}
-                            Top 5 shared posts
+                        Top 5 shared posts
                         {% elif type == "comments" %}
-                            Top 5 commented posts
+                        Top 5 commented posts
                         {% endif %}
                     </h3>
                     <h5 class="card-title text-center mb-2" style="color: black">Last refreshed: {{last_refresh}}</h5>
@@ -39,20 +39,21 @@
                             </th>
                             <th scope="col">
                                 {% if type == "likes" %}
-                                    <i class="icon-thumbs-up"></i>
+                                <i class="icon-thumbs-up"></i>
                                 {% elif type == "shares" %}
-                                    <i class="icon-share"></i>
+                                <i class="icon-share"></i>
                                 {% elif type == "comments" %}
-                                    <i class="icon-comments"></i>
+                                <i class="icon-comments"></i>
                                 {% endif %}
-                            nr</th>
+                                Count
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for post in top_5_posts %}
                         <tr>
                             <th scope="row">{{ post.position }}</th>
-                            <td><a href="http://facebook.com/{{ post.post_id }}">
+                            <td><a target="_blank" href="http://facebook.com/{{ post.post_id }}">
                                 <i class="icon-external-link"></i>
                             </a></td>
 
@@ -75,7 +76,7 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-dark" name="refresh_data"
-                    style="background-color: rgb(40,40,40)"><i class="icon-refresh">   </i>Refresh data
+                    style="background-color: rgb(40,40,40)"><i class="icon-refresh"> </i>Refresh data
             </button>
         </form>
     </div>
@@ -83,53 +84,56 @@
     <div class="col-lg-8 offset-lg-2 my-4">
 
         <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
+            <div class="row  mt-3 card-body">
+                {% if image_url %}
+                <div class="col-md-1">
+                    <img src={{image_url}} class="rounded-circle" alt="...">
 
-            <div class="card-body">
-                <p class="card-text">{{ post.created_time }}</p>
-                <br>
-                <hr class="line mb-5">
-                <h4 class="card-title">{{post.message}}</h4>
+                </div>
+                {% endif %}
+                <div class="col-lg-8 col-md-8 ml-2 my-0 ">
+                    <p class="lead my-0">{{name}}
+                    <p class="card-text my-0">
+                        <i class="icon-calendar"></i> {{ post.created_time }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-body mt-0 pt-0">
+
+                <h5 class="card-title">{{post.message|linebreaks}}</h5>
             </div>
 
             {% if post.photo_source %}
             <div class="container col-lg-12 text-center mx-auto">
-                <img src={{ post.photo_source }} class="card-img-top" alt="...">
+                <img src={{post.photo_source}} class="card-img-top" alt="...">
             </div>
-
             {% endif %}
 
             {% if post.video_source %}
-
             <div class="embed-responsive embed-responsive-16by9">
-                <iframe class="embed-responsive-item" src={{ post.video_source }}
-                        allowfullscreen></iframe>
+                <video class="embed-responsive-item" controls>
+                    <source src={{post.video_source}} type="video/mp4">
+                </video>
             </div>
-
-
             {% endif %}
 
-            <div class="card-body">
-                <br>
-                <hr class="line">
-            </div>
-
             <div class="col-12 text-center my-3">
-                <div class="row " style="color: white">
-                    <div class="col-sm">
+                <div class="row col-12" style="color: white">
+                    <div class="col-4 ">
                         <i class="icon-thumbs-up-alt"></i>
                         Reactions: {{post.reactions_nr}}
                     </div>
-                    <div class="col-sm">
+                    <div class="col-4 ">
                         <i class="icon-comments-alt"></i>
                         Comments: {{post.comments_nr}}
                     </div>
-                    <div class="col-sm">
+                    <div class="col-4 ">
                         <i class="icon-share"></i>
                         Shares: {{post.shares_nr}}
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     {% endfor %}

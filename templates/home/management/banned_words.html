@@ -13,7 +13,7 @@
                         {% csrf_token %}
                         {% include 'accounts/form.html' %}
                         {% if not isValid %}
-                            <p>Adding word failed</p>
+                        <p>Adding word failed</p>
                         {% endif %}
                         <button type="submit" class="btn btn-primary btn-block mt-4" name="add_word">Add word</button>
                     </form>
@@ -22,40 +22,42 @@
         </div>
 
         {% if words %}
-            <div class="col-12 my-4"></div>
-            <div class="col-lg-8 offset-lg-2 my-5 text-center mx-auto">
-                <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-2" style="color: black">Your banned words</h3>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th scope="col">
-                                     <i class="icon-sort-by-order"></i>
-                                </th>
-                                <th scope="col">Word</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for word in words %}
-                            <tr>
-                                <th scope="row">{{ forloop.counter0|add:1 }}</th>
-                                <td>{{word}}</td>
-                                <td>
-                                    <form method="post" style="color: black">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger" name="delete_word" value={{ forloop.counter0 }}>Delete</button>
-                                    </form>
-                                </td>
+        <div class="col-12 my-4"></div>
+        <div class="col-lg-8 offset-lg-2 my-5 text-center mx-auto">
+            <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-2" style="color: black">Your banned words</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">
+                                <i class="icon-sort-by-order"></i>
+                            </th>
+                            <th scope="col">Word</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for word in words %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter0|add:1 }}</th>
+                            <td>{{word}}</td>
+                            <td>
+                                <form method="post" style="color: black">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" name="delete_word" value={{
+                                            forloop.counter0 }}>Delete
+                                    </button>
+                                </form>
+                            </td>
 
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
         {% endif %}
 
     </div>

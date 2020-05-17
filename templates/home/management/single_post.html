@@ -9,87 +9,96 @@
 {% block content %}
 <div class="container mt-5 col-12">
     {% if post %}
-    <div class="row">
-        <div class="col-lg-8 offset-lg-2 my-4">
-            <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
-                <div class="row  my-3 card-body">
-                    {% if image_url %}
-                    <div class="col-md-2">
-                        <img src={{ image_url }} class="rounded-circle" alt="...">
+    <div class="col-lg-8 offset-lg-2 my-4">
 
-                    </div>
-                    {% endif %}
+        <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
+            <div class="row  mt-3 card-body">
+                {% if image_url %}
+                <div class="col-1">
+                    <img src={{image_url}} class="rounded-circle" alt="...">
 
-                    <div class="col-md-5">
-                        <p class="lead">{{name}}
-                    </div>
                 </div>
-
-                <div class="card-body">
-                    <p class="card-text">{{ post.created_time }}</p>
-                    <br>
-                    <hr class="line mb-5">
-                    <h4 class="card-title">{{post.message}}</h4>
-                </div>
-
-                {% if post.photo_source %}
-                <div class="container col-lg-12 text-center mx-auto">
-                    <img src={{ post.photo_source }} class="card-img-top" alt="...">
-                </div>
-
                 {% endif %}
-
-                {% if post.video_source %}
-
-                <div class="embed-responsive embed-responsive-16by9">
-                    <video class="embed-responsive-item" controls>
-                        <source src={{ post.video_source }} type="video/mp4">
-                    </video>
+                <div class="col-9  ml-2 my-0 ">
+                    <p class="lead my-0">{{name}}
+                    <p class="card-text my-0">
+                        <i class="icon-calendar"></i> {{ post.created_time }}
+                    </p>
                 </div>
-
-
-                {% endif %}
-
-                <div class="card-body">
-                    <br>
-                    <hr class="line">
-                </div>
-
-                <div class="col-12 text-center my-3">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="post_id_where_comments_to_like" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
-                                    style="background-color: dodgerblue" name="like_comments">Like all comments
-                            </button>
-                        </form>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="post_id_where_comments_to_delete" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3"
-                                    style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
-                            </button>
-                        </form>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="post_to_delete" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark ml-lg-5"
-                                    style="background-color: darkred" name="delete_post">Delete post
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
+                <a class="col-1 mt-3 " target="_blank" href="http://facebook.com/{{post_id}}">
+                    <i class="icon-external-link"></i>
+                </a>
             </div>
+
+            <div class="card-body mt-0 pt-0">
+
+                <h5 class="card-title">{{post.message|linebreaks}}</h5>
+            </div>
+
+            {% if post.photo_source %}
+            <div class="container col-lg-12 text-center mx-auto">
+                <img src={{post.photo_source}} class="card-img-top" alt="...">
+            </div>
+            {% endif %}
+
+            {% if post.video_source %}
+            <div class="embed-responsive embed-responsive-16by9">
+                <video class="embed-responsive-item" controls>
+                    <source src={{post.video_source}} type="video/mp4">
+                </video>
+            </div>
+            {% endif %}
+
+            <div class="col-12 text-center mt-3">
+                <div class="row col-12" style="color: white">
+                    <div class="col-4 ">
+                        <i class="icon-thumbs-up-alt"></i>
+                        Reactions: {{post.reactions_nr}}
+                    </div>
+                    <div class="col-4 ">
+                        <i class="icon-comments-alt"></i>
+                        Comments: {{post.comments_nr}}
+                    </div>
+                    <div class="col-4 ">
+                        <i class="icon-share"></i>
+                        Shares: {{post.shares_nr}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center my-3">
+                <hr class="line">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id_where_comments_to_like" value="{{post_id}}">
+                        <button type="submit" class="btn btn-dark mr-lg-5"
+                                style="background-color: dodgerblue" name="like_comments">Like all comments
+                        </button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id_where_comments_to_delete" value="{{post_id}}">
+                        <button type="submit" class="btn btn-dark mx-lg-3"
+                                style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
+                        </button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_to_delete" value="{{post_id}}">
+                        <button type="submit" class="btn btn-dark ml-lg-5"
+                                style="background-color: darkred" name="delete_post">Delete post
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
-
     </div>
-
-
     {% else %}
     <div class="alert alert-dark" role="alert">
-       No such post with provided id. To get post id you could use external tool such as linked <a href="https://commentpicker.com/facebook-post-id-finder.php">here</a>
+        No such post with provided id. To get post id you could use external tool such as linked <a target="_blank"
+                                                                                                    href="https://commentpicker.com/facebook-post-id-finder.php">here</a>
     </div>
     {% endif %}
 </div>

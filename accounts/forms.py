@@ -28,7 +28,7 @@ class InsertWord(forms.Form):
 
 
 class InsertedPostID(forms.Form):
-    page_id = forms.CharField(label='Page ID', max_length=100, required=True)
+    post_id = forms.CharField(label='Post ID', max_length=100, required=True)
 
 
 class InsertPost(forms.Form):
@@ -48,5 +48,4 @@ def validate_token_page_id(token, page_id):
 def validate_word(word):
     if " " in word:
         return False
-
     return True
