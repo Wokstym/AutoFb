@@ -13,7 +13,6 @@
         <div class="col-lg-8 col-offset-lg-2 text-center mx-auto my-5">
             <h1 style="text-shadow: 3px 3px 3px rgba(0,0,0,0.5)">Your posts</h1>
         </div>
-
         <div class="col-lg-8 col-offset-lg-8 text-center mx-auto">
             <form method="post">
                 {% csrf_token %}
@@ -34,90 +33,85 @@
                 </button>
             </form>
         </div>
-
         {% for post in posts %}
         <div class="col-lg-8 offset-lg-2 my-4">
 
             <div class="card" style="box-shadow: 10px 6px 18px -4px rgba(0,0,0,0.8)">
-                <div class="row  my-3 card-body">
+                <div class="row  mt-3 card-body">
                     {% if image_url %}
-                    <div class="col-md-2">
-                        <img src={{ image_url }} class="rounded-circle" alt="...">
+                    <div class="col-1">
+                        <img src={{image_url}} class="rounded-circle" alt="...">
 
                     </div>
                     {% endif %}
-
-                    <div class="col-md-5">
-                        <p class="lead">{{name}}
+                    <div class="col-9  ml-2 my-0 ">
+                        <p class="lead my-0">{{name}}
+                        <p class="card-text my-0">
+                            <i class="icon-calendar"></i> {{ post.created_time }}
+                        </p>
                     </div>
+                    <a class="col-1 mt-3 " target="_blank" href="http://facebook.com/{{post.id}}">
+                        <i class="icon-external-link"></i>
+                    </a>
                 </div>
 
-                <div class="card-body">
-                    <p class="card-text">{{ post.created_time }}</p>
-                    <br>
-                    <hr class="line mb-5">
-                    <h4 class="card-title">{{post.message}}</h4>
+                <div class="card-body mt-0 pt-0">
+
+                    <h5 class="card-title">{{post.message|linebreaks}}</h5>
                 </div>
 
                 {% if post.photo_source %}
                 <div class="container col-lg-12 text-center mx-auto">
-                    <img src={{ post.photo_source }} class="card-img-top" alt="...">
+                    <img src={{post.photo_source}} class="card-img-top" alt="...">
                 </div>
-
                 {% endif %}
 
                 {% if post.video_source %}
-
                 <div class="embed-responsive embed-responsive-16by9">
                     <video class="embed-responsive-item" controls>
-                        <source src={{ post.video_source }} type="video/mp4">
+                        <source src={{post.video_source}} type="video/mp4">
                     </video>
                 </div>
-
-
                 {% endif %}
 
-                <div class="card-body">
-                    <div class="col-12 text-center mt-3">
-                    <div class="row" style="color: white">
-                        <div class="col-lg-4">
+                <div class="col-12 text-center mt-3">
+                    <div class="row col-12" style="color: white">
+                        <div class="col-4 ">
                             <i class="icon-thumbs-up-alt"></i>
                             Reactions: {{post.reactions_nr}}
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-4 ">
                             <i class="icon-comments-alt"></i>
                             Comments: {{post.comments_nr}}
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-4 ">
                             <i class="icon-share"></i>
                             Shares: {{post.shares_nr}}
                         </div>
                     </div>
                 </div>
-                    <br>
-                    <hr class="line">
-                </div>
 
                 <div class="col-12 text-center my-3">
+                    <hr class="line">
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="post_id_where_comments_to_like" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
+                            <button type="submit" class="btn btn-dark mr-lg-5"
                                     style="background-color: dodgerblue" name="like_comments">Like all comments
                             </button>
                         </form>
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="post_id_where_comments_to_delete" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark mx-lg-3"
+                            <button type="submit" class="btn btn-dark mx-lg-3"
                                     style="background-color: darkgoldenrod" name="delete_comments">Delete danger words
                             </button>
                         </form>
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="post_to_delete" value="{{ post.id }}">
-                            <button type="submit" id="checkButton" class="btn btn-dark ml-lg-5"
+                            <button type="submit" class="btn btn-dark ml-lg-5"
                                     style="background-color: darkred" name="delete_post">Delete post
                             </button>
                         </form>
@@ -134,7 +128,7 @@
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <a href="{% url 'index' page_number=page_number after=after%}">
-                            <button type="submit" id="checkButton" class="btn btn-dark mr-lg-5"
+                            <button type="submit" class="btn btn-dark mr-lg-5"
                                     style="background-color: dodgerblue" name="next_page">Next page
                             </button>
                         </a>
@@ -145,10 +139,10 @@
     </div>
 
     {% else %}
-     <div class="alert alert-dark col-lg-8 offset-lg-2 text-center" role="alert">
-       There are no more posts
+    <div class="alert alert-dark col-lg-8 offset-lg-2 text-center" role="alert">
+        There are no more posts
     </div>
-<!--    <p style="color: white">There isn't any post on your site</p>-->
+    <!--    <p style="color: white">There isn't any post on your site</p>-->
     {% endif %}
 </div>
 {% endblock %}

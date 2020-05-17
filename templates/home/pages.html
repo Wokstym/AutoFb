@@ -16,27 +16,13 @@
             <h1>Choose your fanpage</h1>
         </div>
         {% for page in pages %}
-        <div class="col-lg-5 my-3 mx-3">
-
-            <div class="row my-3 card-body">
-                {% if image_url %}
-                <div class="col-md-2">
-                    <img src={{ image_url }} class="rounded-circle" alt="...">
-
-                </div>
-                {% endif %}
-                <div class="col-md-5">
-                    <p class="lead">{{name}}
-                </div>
-            </div>
-
-
-            <div class="card">
-                <div class="row my-3 card-body">
-                    <div class="col-2 my-3">
-                        <img src={{ page.photo }} class="rounded-circle" alt="...">
+        <div class="col-lg-6 py-5">
+            <div class="card ">
+                <div class="row card-body">
+                    <div class="col-2 my-3 pl-4">
+                        <img src={{page.photo}} class="rounded-circle" alt="...">
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-8 my-4 text-center">
                         <p class="lead">{{page.name}}
                     </div>
                 </div>
@@ -44,8 +30,6 @@
                     <a class="btn btn-primary" href="{% url 'index' page_number=forloop.counter0 %}">Choose</a>
                 </div>
             </div>
-
-
         </div>
         {% endfor %}
         {% endif %}

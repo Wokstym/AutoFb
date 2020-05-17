@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from django.contrib.auth.forms import UserCreationForm
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 
-from home.models import UserData, BannedWord, Page, Statistics
+from home.models import UserData, Page, Statistics
 from .forms import SignUpForm, InsertToken, validate_token_page_id
 
 
@@ -12,8 +11,8 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            userData = UserData(user=user, pages=[])
-            userData.save()
+            user_data = UserData(user=user, pages=[])
+            user_data.save()
             login(request, user)
             return redirect('add_page')
     else:
@@ -24,7 +23,6 @@ def signup(request):
 def get_token(request):
     if request.method == 'POST':
         form = InsertToken(request.POST)
-        print(type(form))
 
         if form.is_valid():
             token = form.cleaned_data['token']
