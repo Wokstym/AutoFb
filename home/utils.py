@@ -50,9 +50,7 @@ def delete_comments_in_post(post_id, graph, banned_words, page_id):
 
     for comment in comments:
         if comment["from"]["id"] != page_id:
-            print("messsage= " + comment["message"])
             for word in split_words(comment["message"]):
-                print("\tword= " + word)
                 if word in array_with_banned_words:
                     graph.delete_object(comment["id"])
                     break
