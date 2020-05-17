@@ -19,7 +19,10 @@
                         <tbody>
                         <tr>
                             <td>
-                                <a href="{% url 'banned_words' page_number=page_number%}">Banned Words</a>
+                                <a href="{% url 'banned_words' page_number=page_number%}">
+                                    <i class="icon-remove">  </i>
+                                    Banned Words
+                                </a>
                             </td>
                             <td>
                                 You can add banned words to your database and then delete posts that contain those
@@ -28,7 +31,10 @@
                         </tr>
                         <tr>
                             <td>
-                                <a href="{% url 'add_post' page_number=page_number%}">Add post</a>
+                                <a href="{% url 'add_post' page_number=page_number%}">
+                                    <i class="icon-plus-sign">  </i>
+                                    Add post
+                                </a>
                             </td>
                             <td>
                                 You can add posts to your fanpage.
@@ -36,7 +42,10 @@
                         </tr>
                         <tr>
                             <td>
-                                <a href="{% url 'single_post_get' page_number=page_number%}">Post by ID</a>
+                                <a href="{% url 'single_post_get' page_number=page_number%}">
+                                    <i class="icon-edit">  </i>
+                                    Post by ID
+                                </a>
                             </td>
                             <td>
                                 Manage post by id

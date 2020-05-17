@@ -111,7 +111,7 @@ def single_post(request, page_number=0, post_id=None):
             post_id = page_id + "_" + post_id
             post = graph.get_object(id=post_id, fields='comments, object_id, type, created_time')
         except:
-            return render(request, 'home/single_post.html', {})
+            return render(request, 'home/management/single_post.html', {})
     utils.pretty_print_json(post)
 
     data = graph.get_object(id=page_id, fields='name, picture')
@@ -151,7 +151,7 @@ def single_post(request, page_number=0, post_id=None):
     elif request.method == 'POST' and 'delete_post' in request.POST:
         utils.delete_post(request.POST.dict()['post_to_delete'], graph)
 
-    return render(request, 'home/single_post.html', context)
+    return render(request, 'home/management/single_post.html', context)
 
 
 def start_page(request):
@@ -159,7 +159,7 @@ def start_page(request):
 
 
 def management_page(request, page_number=0):
-    return render(request, 'home/management.html', {'page_number': page_number})
+    return render(request, 'home/management/management.html', {'page_number': page_number})
 
 
 def banned_words_page(request, page_number=0):
@@ -191,19 +191,19 @@ def banned_words_page(request, page_number=0):
 
                     user_data.save()
                 form = InsertWord()
-                return render(request, 'home/banned_words.html', {'page_number': page_number,
+                return render(request, 'home/management/banned_words.html', {'page_number': page_number,
                                                                   'words': banned_words,
                                                                   'form': form,
                                                                   'isValid': True})
             else:
                 form = InsertWord()
-                return render(request, 'home/banned_words.html', {'page_number': page_number,
+                return render(request, 'home/management/banned_words.html', {'page_number': page_number,
                                                                   'words': banned_words,
                                                                   'form': form,
                                                                   'isValid': False})
         else:
             form = InsertWord()
-            return render(request, 'home/banned_words.html', {'page_number': page_number,
+            return render(request, 'home/management/banned_words.html', {'page_number': page_number,
                                                               'words': banned_words,
                                                               'form': form,
 
@@ -217,7 +217,7 @@ def banned_words_page(request, page_number=0):
     else:
         form = InsertWord()
 
-    return render(request, 'home/banned_words.html', {'page_number': page_number,
+    return render(request, 'home/management/banned_words.html', {'page_number': page_number,
                                                       'words': banned_words,
                                                       'form': form,
                                                       'isValid': True})
@@ -283,11 +283,11 @@ def add_post(request, page_number=0):
 
                 graph.put_photo(image=img_byte_array, message=message)
 
-        return render(request, 'home/add_post.html', {'page_number': page_number,
+        return render(request, 'home/management/add_post.html', {'page_number': page_number,
                                                       'form': InsertPost(),
                                                       'isValid': True})
     else:
-        return render(request, 'home/add_post.html', {'page_number': page_number,
+        return render(request, 'home/management/add_post.html', {'page_number': page_number,
                                                       'form': InsertPost(),
                                                       'isValid': False})
 
@@ -303,6 +303,7 @@ def top_shared_posts(request, page_number=0):
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_shared_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_shared_posts_refresh_date
     context['post_data'] = utils.get_post_data(graph, context['top_5_posts'])
+    context['type'] = "shares"
 
     return render(request, 'home/statistics/top_x_posts.html', context)
 
@@ -320,6 +321,7 @@ def top_commented_posts(request, page_number=0):
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_commented_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_commented_posts_refresh_date
     context['post_data'] = utils.get_post_data(graph, context['top_5_posts'])
+    context['type'] = "comments"
 
     return render(request, 'home/statistics/top_x_posts.html', context)
 
@@ -335,6 +337,7 @@ def top_liked_posts(request, page_number=0):
     context['top_5_posts'] = user_data.pages[page_number].statistics.top_liked_posts
     context['last_refresh'] = user_data.pages[page_number].statistics.top_liked_posts_refresh_date
     context['post_data'] = utils.get_post_data(graph, context['top_5_posts'])
+    context['type'] = "likes"
 
     return render(request, 'home/statistics/top_x_posts.html', context)
 
@@ -349,13 +352,13 @@ def single_post_get(request, page_number=0):
 
         else:
             form = InsertedPostID()
-            return render(request, 'home/banned_words.html', {'page_number': page_number,
+            return render(request, 'home/management/banned_words.html', {'page_number': page_number,
                                                               'form': form,
                                                               'isValid': False})
 
     else:
         form = InsertedPostID
 
-    return render(request, 'home/single_post_get.html', {'page_number': page_number,
+    return render(request, 'home/management/single_post_get.html', {'page_number': page_number,
                                                          'form': form,
                                                          'isValid': True})
