@@ -41,13 +41,17 @@ def index(request, page_number=0, after='none'):
         )
         post['created_time'] = dateutil.parser.parse(post['created_time'])
 
-        if post_data['type'] == "photo":
-            photo_data = graph.get_object(id=post_data['object_id'], fields='images')
-            post['photo_source'] = photo_data['images'][0]['source']
+        # cannot get photo and video of shared post
+        try:
+            if post_data['type'] == "photo":
+                photo_data = graph.get_object(id=post_data['object_id'], fields='images')
+                post['photo_source'] = photo_data['images'][0]['source']
 
-        elif post_data['type'] == "video":
-            video = graph.get_object(id=post_data['object_id'], fields='source')
-            post['video_source'] = video['source']
+            elif post_data['type'] == "video":
+                video = graph.get_object(id=post_data['object_id'], fields='source')
+                post['video_source'] = video['source']
+        except:
+            pass
 
         if 'comments' in post_data:
             post['comments'] = post_data['comments']['data']

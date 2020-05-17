@@ -29,12 +29,14 @@ pip install -r requirements.txt
 - [x] wyswietl top komentujących na całej stronie
 - [x] wyswietlanie top 5 postów o najwiekszej ilości lajków/komentarzy/sharów 
 - [x] mozliwość usuwania komentarzy zawierających słowa z bazy którą definiuje użytkownik
+- [x] usuwanie postów
 - [x] lajkowanie komentarzy w danym poscie/ wszystkie posty
 - [x] usuwanie posta
 ## lab 6 (Maj 19/21)
 - [x] usuwanie zakazanych słów z bazy
 - [x] forms do dodawania postu na fanpage (text, zdjęcie)
 - [x] uploading obrazów
+- [x] zarządzanie postem po jego id
 - [ ] scheduling 
 
 ## Oddanie projektu (Czerwiec 2/4)
