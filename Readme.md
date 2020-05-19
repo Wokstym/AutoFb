@@ -43,7 +43,7 @@ pip install -r requirements.txt
 - [x] Post deletion
 - [x] Liking all comments in a post/all posts
 
-### lab 6 (May 19/21)
+### Lab 6 (May 19/21)
 
 - [x] Deletion of banned words from database
 - [x] Form for adding post with photo
