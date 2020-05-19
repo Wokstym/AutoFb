@@ -113,13 +113,16 @@ def get_post_data(graph, top_5_posts):
         if 'message' in post_data:
             context_post['message'] = post_data['message']
 
-        if post_data['type'] == "photo":
-            photo_data = graph.get_object(id=post_data['object_id'], fields='images')
-            context_post['photo_source'] = photo_data['images'][0]['source']
+        try:
+            if post_data['type'] == "photo":
+                photo_data = graph.get_object(id=post_data['object_id'], fields='images')
+                context_post['photo_source'] = photo_data['images'][0]['source']
 
-        elif post_data['type'] == "video":
-            video = graph.get_object(id=post_data['object_id'], fields='source')
-            context_post['video_source'] = video['source']
+            elif post_data['type'] == "video":
+                video = graph.get_object(id=post_data['object_id'], fields='source')
+                context_post['video_source'] = video['source']
+        except:
+            pass
 
         context_post_data.append(context_post)
     return context_post_data
