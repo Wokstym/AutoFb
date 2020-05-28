@@ -10,8 +10,6 @@
 
 Page used for automating tasks when managing pages, such as storing not allowed words, that with a push of a button are localized in comments and deleted in choosen post or all posts, liking all comments, deleteting and posting posts. You can also view statistics that are not avaible in facebook such as top 5 most commented, shared and liked posts or top 5 most active commenters.
 
-Project teached us working in a team using branches, merging with master finished aspects and resolving conflicts, overall concept of using API for fetching and posting content and usage of django + mongodb database models, renderign views and Django template language.
-
 ## Showcase
 
 ![presentation gif](./presentation.gif)
@@ -26,32 +24,48 @@ pip install -r requirements.txt
 
 ### Lab 3 (April 7/9)
 
-- [x] Django configuration
-- [x] Database mongo atlas configuration
+- [x] Django configuration (Grzesiek)
+- [x] Database mongo atlas configuration (Grzesiek)
 
 ### Lab 4 (April 21/23)
 
-- [x] Loging and registration
-- [x] Token autorization and storage
-- [x] Main page with posts
+- [x] Logging and registration (Grzesiek)
+- [x] Token authorization and storage (Grzesiek)
+- [x] Main page with posts (Ola)
 
 ### Lab 5 (May 5/7)
 
-- [x] Statistics about top 5 commenters
-- [x] Statistics about top 5 posts with biggest amout of likes/comment/shares
-- [x] Ability to delete comments containign words from database
-- [x] Post deletion
-- [x] Liking all comments in a post/all posts
+- [x] Statistics about top 5 commenters (Grzesiek)
+- [x] Statistics about top 5 posts with biggest amount of likes/comment/shares (Grzesiek)
+- [x] Ability to delete comments containing words from database (Ola)
+- [x] Post deletion (Ola)
+- [x] Liking all comments in a post/all posts (Ola)
+- [x] Fanpage selection (Ola)
 
 ### Lab 6 (May 19/21)
 
-- [x] Deletion of banned words from database
-- [x] Form for adding post with photo
-- [x] Uploading of photos
-- [x] Management of post by its id
+- [x] Deletion of banned words from database (Ola)
+- [x] Form for adding post with photo (Ola)
+- [x] Uploading of photos (Ola)
+- [x] Management of post by its id (Grzesiek)
+- [x] Posts pagination (Grzesiek)
 - [ ] Scheduling
 
 ### Project submission (June 2/4)
+
+## Summary
+
+Project teached us working in a team using branches, merging with master finished aspects and resolving conflicts, overall concept of using API for fetching and posting content and usage of django + mongodb database models, renderign views and Django template language.
+
+We've done all the planned things except one - scheduling. We've tried to use many libraries but they didn't want to work with us.
+
+### Ola
+
+The project turned out to be quite time consuming due to problems with the Django version and access to facebook data. 
+But despite this I think we're both happy with the result.
+My knowledge of Python, Django and  mongodb has certainly expanded.
+I will also remember for the future that the latest version is not always the best choice and that Python has a huge number of libraries that make life easier.
+
 
 ## Contributors ✨
 
