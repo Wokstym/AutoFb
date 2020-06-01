@@ -66,6 +66,11 @@ But despite this I think we're both happy with the result.
 My knowledge of Python, Django and  mongodb has certainly expanded.
 I will also remember for the future that the latest version is not always the best choice and that Python has a huge number of libraries that make life easier.
 
+### Grzesiek
+
+Project taught me that sometime it is better to check full documentation than jump to coding after having a first idea how something can be done. I also improved in "python" approach of programming, changing traditional for loops to list comprehensions. It also taught me about using APIs and that sometimes you cant acces everything with specific tokens.
+Project was really fun, django is a framework that a lot of is being done for us, we just worry about html and passing right context.
+
 
 ## Contributors ✨
 
